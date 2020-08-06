@@ -60,7 +60,7 @@ class MainContent extends HTMLElement{
                 Chart.helpers.each(Chart.instances, function(instance){
                     instance.destroy();
                 })
-                console.log($('.chart'));
+                //console.log($('.chart'));
                 this.page = pageToGo;
                 
             });
