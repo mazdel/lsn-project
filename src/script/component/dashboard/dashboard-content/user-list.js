@@ -1,4 +1,3 @@
-
 class UserList extends HTMLElement{
     constructor(){
         super();
@@ -27,7 +26,8 @@ class UserList extends HTMLElement{
         //this.render();
     }
     render(){
-        $(this).html(`
+        
+        $(this).html(/*html*/`
         <div class="green lighten-5">
             <div class="row d block">
                 <div class="col s12 m12 l12">
