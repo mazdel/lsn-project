@@ -11,7 +11,7 @@ const path = window.location.pathname.substr(1);
 const contentPage = document.querySelector('main-content');
 
 const dashboard =()=>{
-    console.log('loll');
+    //console.log('loll');
     const content = new PageHelper(contentPage);
     if(path=='dashboard.html'){
         content.loadPage(page);

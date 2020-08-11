@@ -1,7 +1,7 @@
 //import js
 import 'regenerator-runtime';
 import 'bootstrap';
-import '@fortawesome/fontawesome-free/js/all';
+//import '@fortawesome/fontawesome-free/js/all';
 import 'materialize-css/dist/js/materialize.min.js';
 //import css
 import 'bootstrap/dist/css/bootstrap.min.css';

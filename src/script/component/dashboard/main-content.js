@@ -2,6 +2,7 @@ import site from '../../data/site-data';
 import './dashboard-content/dash-board';
 import './dashboard-content/user-list';
 
+
 class MainContent extends HTMLElement{
     constructor(){
         super();
@@ -27,6 +28,7 @@ class MainContent extends HTMLElement{
     }
     set page(pagex){
         this._page=pagex;
+        
         this.render();
     }
     render(){
@@ -46,25 +48,7 @@ class MainContent extends HTMLElement{
         inPage.site=site;
         
         $(this).html(inPage);
-        $('.nav-action').each((key,elm)=>{
-            $(elm).on('click',()=>{
-                const pageToGo = $(elm).attr('href').substr(1);
-                /*
-                $('.chart').each((key,elm)=>{
-                    $(elm).remove();
-                })
-                $('.chartjs-size-monitor').each((key1,elm1)=>{
-                    $(elm1).remove();
-                })
-                */
-                Chart.helpers.each(Chart.instances, function(instance){
-                    instance.destroy();
-                })
-                //console.log($('.chart'));
-                this.page = pageToGo;
-                
-            });
-        });
+        
     }
 }
 customElements.define('main-content',MainContent);

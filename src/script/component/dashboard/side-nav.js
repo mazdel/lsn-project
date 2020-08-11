@@ -1,5 +1,6 @@
 import SideNavHelper from '../../helper/sidenav-helper';
 import site from '../../data/site-data';
+import IconHelper from '../../helper/icon-helper';
 
 class SideNav extends HTMLElement{
     constructor(){
@@ -29,10 +30,8 @@ class SideNav extends HTMLElement{
         let sidemenu='',_group;
         
         site.dummy.sidenav.forEach(menu=>{
-            let icon ='';
-            if(menu.icon){
-                icon=`<i class="material-icons">${menu.icon}</i>`
-            }
+            let icon = IconHelper.icon(menu.icon,menu.icon_type);
+            
             //shorthand untuk mengisi variabel _group apabila masih kosong
             _group=_group?_group:menu.group;
             if(_group!=menu.group){
@@ -62,7 +61,20 @@ class SideNav extends HTMLElement{
             </ul>
             
         `);
-        
+        $('.nav-action').each((key,elm)=>{
+            $(elm).on('click',()=>{
+                const pageToGo = $(elm).attr('href').substr(1);
+                
+                Chart.helpers.each(Chart.instances, function(instance){
+                    instance.destroy();
+                })
+                //console.log($('.chart'));
+                const mainContent = document.querySelector("main-content");//$(`<main-content></main-content>`)[0];
+                mainContent.page = pageToGo;
+                //console.log(`should have to go to `,mainContent);
+                
+            });
+        });
         $(document).ready(()=>{
             $('.sidenav').sidenav({inDuration:500,outDuration:500});
             $('header').addClass('sideEffect');

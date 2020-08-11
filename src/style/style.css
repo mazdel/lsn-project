@@ -70,7 +70,9 @@ form .form-title>p{
 a#sidenav-burger-wide{
     margin:0 18px;
 }
-
+side-nav li>a>i.fa,side-nav li>a>i.fas,side-nav li>a>i.far{
+    font-size: 23px;
+}
 .smoothly{
     -webkit-transition: all 500ms ease;
 	-moz-transition: all 500ms ease;
@@ -98,4 +100,7 @@ dash-board .card h6{
     header.sideEffect, main.sideEffect, footer.sideEffect {
         padding-left: 0;
     }
+}
+.white-text>.btn-flat{
+    color:#fff!important;
 }
