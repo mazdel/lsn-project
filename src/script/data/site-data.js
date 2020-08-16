@@ -40,6 +40,38 @@ const site = {
                 group:'2',
                 parent:''
             }
+        ],
+        user:[
+            {
+                id:1,
+                name:'admin',
+                nik:'123456',
+                password:'diadmini',
+                fullname:'ngadimin',
+                telp:'08999991919',
+                domisili_kab:'KAB. JEMBER',
+                domisili_kec:'KENCONG',
+            },
+            {
+                id:2,
+                name:'john',
+                nik:'123456',
+                password:'diadmini',
+                fullname:'john emblo',
+                telp:'08999991919',
+                domisili_kab:'KAB. LUMAJANG',
+                domisili_kec:'TEMPEH',
+            },
+            {
+                id:3,
+                name:'ECLAIR',
+                nik:'123456',
+                password:'diadmini',
+                fullname:'eclair bin sutakir',
+                telp:'08999991919',
+                domisili_kab:'KAB. JEMBER',
+                domisili_kec:'BALUNG',
+            }
         ]
     }
 }

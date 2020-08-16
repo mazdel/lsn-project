@@ -31,7 +31,7 @@ class SignUp extends HTMLElement{
     }
     render(){
         
-        $(this).html(`
+        $(this).html(/*html*/`
         <div class="col s12 m6">
             <div class="card">
                 <div class="card-image">

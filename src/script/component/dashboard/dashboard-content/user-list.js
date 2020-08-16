@@ -1,3 +1,6 @@
+import site from '../../../data/site-data';
+import kabupaten from '../../../data/kabupaten';
+
 class UserList extends HTMLElement{
     constructor(){
         super();
@@ -26,7 +29,60 @@ class UserList extends HTMLElement{
         //this.render();
     }
     render(){
-        
+        let user_list ='',user_modal='';
+        site.dummy.user.forEach((user,key)=>{
+            user_list+=/*html*/`
+            <tr>
+                <td>${key+1}</td>
+                <td>${user.fullname}</td>
+                <td>${user.domisili_kab}</td>
+                <td>
+                    <div class="white-text center">
+                        <a href="#viewUser${user.id}" class="modal-trigger waves-effect btn-flat waves-light blue btn-small">
+                        <i class="material-icons">visibility</i>
+                        </a>
+                        <a href="#editUser${user.id}" class="modal-trigger waves-effect btn-flat waves-light green btn-small">
+                            <i class="material-icons">edit</i>
+                        </a>
+                        <a href="#delUser${user.id}" class="modal-trigger waves-effect btn-flat waves-light red btn-small">
+                            <i class="material-icons">delete</i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            `;
+            user_modal+=/*html*/`
+            <div id="viewUser${user.id}" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4>Lihat detail anggota ${user.fullname}</h4>
+                    
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-close waves-effect waves-green btn-flat">Tutup</a>
+                </div>
+            </div>
+            <div id="editUser${user.id}" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4>Edit data anggota ${user.fullname}</h4>
+                    
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-close waves-effect waves-green btn-flat">Batal</a>
+                    <a id="submitEdit" data-identity="${user.id}" class="modal-close waves-effect waves-green btn-flat">Submit</a>
+                </div>
+            </div>
+            <div id="delUser${user.id}" class="modal modal-fixed-footer">
+                <div class="modal-content">
+                    <h4>Anda yakin menghapus anggota ${user.fullname}?</h4>
+                    
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-close waves-effect waves-green btn-flat">Tidak</a>
+                    <a class="modal-close waves-effect waves-green btn-flat">Ya, saya yakin</a>
+                </div>
+            </div>
+            `
+        })
         $(this).html(/*html*/`
         <div class="green lighten-5">
             <div class="row d block">
@@ -44,60 +100,7 @@ class UserList extends HTMLElement{
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Eclair</td>
-                                        <td>Jember</td>
-                                        <td>
-                                            <div class="white-text center">
-                                                <a class="waves-effect btn-flat waves-light blue btn-small">
-                                                <i class="material-icons">visibility</i>
-                                                </a>
-                                                <a class="waves-effect  btn-flat waves-light green btn-small">
-                                                    <i class="material-icons">edit</i>
-                                                </a>
-                                                <a class="waves-effect btn-flat waves-light red btn-small">
-                                                    <i class="material-icons">delete</i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Jellybean</td>
-                                        <td>Jember</td>
-                                        <td>
-                                            <div class="white-text center">
-                                                <a class="waves-effect btn-flat waves-light blue btn-small">
-                                                <i class="material-icons">visibility</i>
-                                                </a>
-                                                <a class="waves-effect  btn-flat waves-light green btn-small">
-                                                    <i class="material-icons">edit</i>
-                                                </a>
-                                                <a class="waves-effect btn-flat waves-light red btn-small">
-                                                    <i class="material-icons">delete</i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Lollipop</td>
-                                        <td>Lumajang</td>
-                                        <td>
-                                            <div class="white-text center">
-                                                <a class="waves-effect btn-flat waves-light blue btn-small">
-                                                <i class="material-icons">visibility</i>
-                                                </a>
-                                                <a class="waves-effect  btn-flat waves-light green btn-small">
-                                                    <i class="material-icons">edit</i>
-                                                </a>
-                                                <a class="waves-effect btn-flat waves-light red btn-small">
-                                                    <i class="material-icons">delete</i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    ${user_list}
                                 </tbody>
                             </table>
                         </div>
@@ -118,14 +121,10 @@ class UserList extends HTMLElement{
                 <li><a class="btn-floating green tooltipped" data-position="left" data-tooltip="Download seluruh data anggota (coming soon)">
                     <i class="material-icons">file_download</i>
                 </a></li>
-                <!--
-                <li><a class="btn-floating blue  tooltipped" data-position="left" data-tooltip="Sisipkan data">
-                    <i class="material-icons">attach_file</i>
-                </a></li>
-                -->
+                
             </ul>
         </div>
-        <!-- Modal Structure -->
+        <!-- Modal -->
         <div id="modal1" class="modal modal-fixed-footer">
             <div class="modal-content">
                 <h4>Tambah Anggota</h4>
@@ -165,6 +164,20 @@ class UserList extends HTMLElement{
                             <label for="password">Ulangi Kata Sandi*</label>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="input-field col s12" id="_kabupaten">
+                            <i class="material-icons prefix">location_on</i>
+                            <select name="domisili_kab" id="domisili_kab" >
+                                
+                            </select>
+                            <label for="domisili_kab">Domisili</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12" id="_kecamatan">
+                            
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -172,6 +185,7 @@ class UserList extends HTMLElement{
                 <a  id="submit" class="modal-close waves-effect waves-green btn-flat">Submit</a>
             </div>
         </div>
+        ${user_modal}
         `);
         $(document).ready(function(){
             $('.fixed-action-btn').floatingActionButton({
@@ -183,7 +197,50 @@ class UserList extends HTMLElement{
         });
         $('#submit').click(()=>{
             M.toast({html: 'Penambahan anggota sukses'});
-        })
+        });
+        //untuk menampilkan kecamatan setiap ganti kabupaten
+        const showKecamatan = (id=3509)=>{
+            kabupaten().then(items=>{
+                let selections = `
+                    <i class="material-icons prefix">location_on</i>
+                    <select name="domisili_kec" id="domisili_kec" >
+                        <option value="" disabled selected>Pilih Kecamatan</option>
+                `;
+                items.forEach((item)=>{
+                    if(item.id==id){
+                        item.kecamatan.forEach(kecamatan=>{
+                            selections+=`<option value="${kecamatan.id}">${kecamatan.nama}</option>`
+                        })
+                    }
+                });
+                selections+=`
+                    </select>
+                    <label for="domisili_Kec">Pilih Kecamatan</label>`;
+
+                //console.log(selections);
+                $('div#_kecamatan').html(selections);
+                //$('select').select2({width: "70%"});
+                $('select').formSelect();
+            });
+        }
+        kabupaten().then(items=>{
+            let selections = `<option value="" disabled selected>Pilih Kabupaten</option>`;
+            items.forEach((item)=>{
+                selections+=`<option value="${item.id}">${item.nama}</option>`
+                //console.log(item);
+            })
+            $('select#domisili_kab').html(selections);
+            //$('select').select2({width: "70%"});
+            $('select').formSelect();
+            $('select#domisili_kab').on(`change`,(event)=>{
+                
+                //solving bug that has been discussed here
+                //https://github.com/Dogfalo/materialize/issues/6123
+                const selectedIndex = M.FormSelect.getInstance($('select#domisili_kab')).el.selectedIndex;
+                const selectedVal = $('select#domisili_kab').children().eq(selectedIndex).val();
+                showKecamatan(selectedVal);
+            })
+        });
     }
 }
 customElements.define('user-list',UserList);

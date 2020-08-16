@@ -30,14 +30,14 @@ class DashBoard extends HTMLElement{
         //this.render();
     }
     render(){
-        $(this).html(`
+        $(this).html(/*html*/`
         <div class="green lighten-5">
             <div class="row d block">
                 <div class="col s12 m6">
                     <div class="card">
                         <div class="card-content black-text">
                             <span class="card-title">Anggota Lumajang</span>
-                            <h3>5</h3> Pendaftar baru hari ini
+                            <h3 id='totLum'>5</h3> Pendaftar baru hari ini
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@ class DashBoard extends HTMLElement{
                     <div class="card">
                         <div class="card-content black-text">
                             <span class="card-title">Anggota Jember</span>
-                            <h3>10</h3> Pendaftar baru hari ini
+                            <h3 id="totJem">10</h3> Pendaftar baru hari ini
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@ class DashBoard extends HTMLElement{
                         <div class="card-content white black-text">
                             <span class="card-title">Anggota LSN</span>
                             <canvas id="chart1" class="chart"></canvas>
-                            <h5>180</h5>
+                            <h5 id='totMem'>180</h5>
                             <p>Total anggota saat ini</p>
                         </div>
                     </div>
@@ -70,12 +70,21 @@ class DashBoard extends HTMLElement{
             </div>
         </div>
         `);
+        /** data dummy */
+        const jember = Math.floor(Math.random() * 100);
+        const lumajang = Math.floor(Math.random() * 100);
+        $('#totJem').text(jember);
+        $('#totLum').text(lumajang);
+        $('#totMem').text(jember+lumajang);
         const chart1 = new Chart($('#chart1'),{
             type: 'doughnut',
             data: {
                 labels: ['Lumajang', 'Jember'],
                 datasets: [{
-                    data: [80, 100],
+                    data: [
+                        jember, 
+                        lumajang
+                    ],
                     backgroundColor: [
                         customColor.red,
                         customColor.blue,
@@ -98,7 +107,7 @@ class DashBoard extends HTMLElement{
                 }]
             },
             options: {
-                animation:false
+                /*animation:false*/
             }
         })
         const chart2 = new Chart($('#chart2'),{
@@ -122,7 +131,7 @@ class DashBoard extends HTMLElement{
                         Math.floor(Math.random() * 100),
                         Math.floor(Math.random() * 100),
                         Math.floor(Math.random() * 100),
-                        Math.floor(Math.random() * 100)
+                        jember+lumajang
                     ],
                     pointBackgroundColor: [
                         customColor.red,
@@ -149,7 +158,7 @@ class DashBoard extends HTMLElement{
                         }
                     }]
                 },
-                animation:false
+                /*animation:false*/
             }
         })
         

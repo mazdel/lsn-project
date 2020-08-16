@@ -45,7 +45,7 @@ class SideNav extends HTMLElement{
             _group = menu.group;
         });
         //console.log(sidemenu);
-        $(this).html(`
+        $(this).html(/*html*/`
             <ul id="slide-out" class="sidenav sidenav-fixed">
             <li>
                 <div class="user-view">
@@ -71,6 +71,9 @@ class SideNav extends HTMLElement{
                 //console.log($('.chart'));
                 const mainContent = document.querySelector("main-content");//$(`<main-content></main-content>`)[0];
                 mainContent.page = pageToGo;
+                if($(window).innerWidth()<=992){
+                    $('.sidenav').sidenav('close');
+                }
                 //console.log(`should have to go to `,mainContent);
                 
             });
