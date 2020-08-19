@@ -4,7 +4,7 @@ class SignIn extends HTMLElement{
     }
     connectedCallback(){
         this.id = $(this).attr("id")||"sign-in";
-        this.class = $(this).attr("class")||"row";
+        this.class = $(this).attr("class")||"container";
         $(this).attr("class",this.class);
         this.render();
     }
@@ -27,7 +27,7 @@ class SignIn extends HTMLElement{
     render(){
         
         //generate html
-        $(this).html(`
+        $(this).html(/*html*/`
         <div class="col s12 m6">
             <div class="card">
                 <div class="card-image">
