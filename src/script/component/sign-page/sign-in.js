@@ -1,33 +1,34 @@
-class SignIn extends HTMLElement{
-    constructor(){
+class SignIn extends HTMLElement {
+    constructor() {
         super();
     }
-    connectedCallback(){
-        this.id = $(this).attr("id")||"sign-in";
-        this.class = $(this).attr("class")||"container";
-        $(this).attr("class",this.class);
+    connectedCallback() {
+        this.id = $(this).attr("id") || "sign-in";
+        this.class = $(this).attr("class") || "";
+        $(this).attr("class", this.class);
         this.render();
     }
-    disconnectedCallback(){
-        
-    }
-    adoptedCallback(){
+    disconnectedCallback() {
 
     }
-    attributeChangedCallback(name,oldValue,newValue){
+    adoptedCallback() {
 
     }
-    static get observedAttributes(){
-        return ['src','id','name','class'];
+    attributeChangedCallback(name, oldValue, newValue) {
+
     }
-    set site(data){
-        this._site=data;
+    static get observedAttributes() {
+        return ['src', 'id', 'name', 'class'];
+    }
+    set site(data) {
+        this._site = data;
         //this.render();
     }
-    render(){
-        
+    render() {
+
         //generate html
-        $(this).html(/*html*/`
+        $(this).html( /*html*/ `
+        <div class="container">
         <div class="col s12 m6">
             <div class="card">
                 <div class="card-image">
@@ -81,7 +82,8 @@ class SignIn extends HTMLElement{
                 </div>
             </div>
         </div>
+        </div>
         `);
     }
 }
-customElements.define('sign-in',SignIn);
+customElements.define('sign-in', SignIn);

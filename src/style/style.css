@@ -1,111 +1,140 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
-*{
-	scroll-behavior: smooth;
+* {
+    scroll-behavior: smooth;
 }
-body{
-    font-family: Quicksand,sans-serif;
-    
+
+body {
+    font-family: Quicksand, sans-serif;
     vertical-align: middle;
     display: flex;
     min-height: 100vh;
     flex-direction: column;
 }
+
 main {
     flex: 1 0 auto;
 }
-.d.block{
+
+.d.block {
     display: block;
 }
-body#sign-page{
-    background-color: #4caf50 ;
+
+body#sign-page {
+    background-color: #4caf50;
 }
-a:hover{
+
+a:hover {
     text-decoration: none;
     font-weight: bolder;
 }
-top-nav nav a:hover{
+
+top-nav nav a:hover {
     text-decoration: none;
     color: #fff;
     font-weight: bolder;
 }
-top-nav nav .brand-logo{
+
+top-nav nav .brand-logo {
     position: relative;
     font-size: 4vw;
 }
-sign-page>:only-child{
+
+sign-page>:only-child {
     position: relative;
     top: 5vh;
 }
-sign-page .card{
+
+sign-page .card {
     border-radius: 22px;
     background-color: #fff;
 }
-sign-page .card .card-image img{
+
+sign-page .card .card-image img {
     border-radius: 22px 22px 0 0;
 }
-sign-page .card .card-content{
+
+sign-page .card .card-content {
     border-radius: 22px 22px 0 0;
     position: relative;
     top: -20px;
     background-color: #fff;
 }
-sign-page *>a:hover{
+
+sign-page *>a:hover {
     font-weight: bolder;
 }
-sign-page *>a.btn:hover{
+
+sign-page *>a.btn:hover {
     color: #fff;
 }
-form .form-title>h5{
+
+form .form-title>h5 {
     text-align: center;
 }
-form .form-title>p{
+
+form .form-title>p {
     text-align: left;
     padding: 25px;
 }
+
+
 /*sidenav customization*/
-.sideEffect{
+
+.sideEffect {
     padding-left: 300px;
 }
-a#sidenav-burger-wide{
-    margin:0 18px;
+
+a#sidenav-burger-wide {
+    margin: 0 18px;
 }
-side-nav li>a>i.fa,side-nav li>a>i.fas,side-nav li>a>i.far{
+
+side-nav li>a>i.fa,
+side-nav li>a>i.fas,
+side-nav li>a>i.far {
     font-size: 23px;
 }
-.smoothly{
+
+.smoothly {
     -webkit-transition: all 500ms ease;
-	-moz-transition: all 500ms ease;
-	-ms-transition: all 500ms ease;
-	-o-transition: all 500ms ease;
-	transition: all 500ms ease;
+    -moz-transition: all 500ms ease;
+    -ms-transition: all 500ms ease;
+    -o-transition: all 500ms ease;
+    transition: all 500ms ease;
 }
-dash-board >* .card-title{
+
+dash-board>* .card-title {
     border-bottom: solid;
     border-width: thin;
     border-color: lightgray;
 }
+
 dash-board .card h1,
 dash-board .card h2,
 dash-board .card h3,
 dash-board .card h4,
 dash-board .card h5,
-dash-board .card h6{
+dash-board .card h6 {
     font-weight: bolder;
 }
-.modal{
+
+.modal {
     border-radius: 20px;
 }
-@media only screen and (max-width : 992px) {
-    header.sideEffect, main.sideEffect, footer.sideEffect {
+
+@media only screen and (max-width: 992px) {
+    header.sideEffect,
+    main.sideEffect,
+    footer.sideEffect {
         padding-left: 0;
     }
 }
-@media only screen and (min-width : 993px) {
-    sign-page>:only-child{
-        width: 500px;
+
+@media only screen and (min-width: 993px) {
+    sign-page>:only-child>div {
+        width: 50%;
     }
 }
 
-.white-text>.btn-flat{
-    color:#fff!important;
+.white-text>.btn-flat {
+    color: #fff!important;
 }

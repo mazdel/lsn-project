@@ -17,13 +17,13 @@ import './style/style.css';
 import dashboard from './script/view/dashboard';
 
 
-$(document).ready(()=>{
+$(document).ready(() => {
     main();
-    
+
     $('.timepicker').timepicker({
-        twelveHour:false
+        twelveHour: false
     });
     $('.timepicker').datepicker({
-        format:'dd/mm/yyyy'
+        format: 'dd/mm/yyyy'
     });
 });
