@@ -1,3 +1,6 @@
+import axios from 'axios';
+import prePost from '../../helper/api-helper';
+
 class SignIn extends HTMLElement {
     constructor() {
         super();
@@ -35,7 +38,7 @@ class SignIn extends HTMLElement {
                     <img src="./src/img/lsn-banner.jpg">
                 </div>
                 <div class="card-content">
-                    <form class="login-form" >
+                    <form class="signin-form" id="signin" method="post" >
                         <div class="row">
                             <div class="input-field col s12">
                                 <div class="form-title">
@@ -67,15 +70,20 @@ class SignIn extends HTMLElement {
                         </div>
                         <div class="row">
                             <div class="input-field col s12">
-                                <a href="./dashboard.html" id="btn-login" class="btn green darken-1 waves-effect waves-light col s12 spage-action">Masuk</a>
+                                <button type="submit" id="btn-signin" class="btn green darken-1 waves-effect waves-light col s12" form="signin">Masuk</button>
+                            </div>
+                            <div class="progress" id="loading">
+                                <div class="indeterminate green darken-3"></div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field col s6 m6 l6">
-                                <p class="margin medium-small"><a class="green-text spage-action" href="#signup">Daftar Sekarang!</a></p>
+                                <p class="margin medium-small"><a class="green-text spage-action" href="#signup">Anda belum punya akun? Daftar Sekarang!</a></p>
                             </div>
                             <div class="input-field col s6 m6 l6">
+                                <!--
                                 <p class="margin right-align medium-small"><a class="green-text spage-action" href="#forgot" >Lupa kata sandi?</a></p>
+                                -->
                             </div>          
                         </div>
                     </form>
@@ -84,6 +92,17 @@ class SignIn extends HTMLElement {
         </div>
         </div>
         `);
+        $(() => {
+            $('#loading').hide();
+        })
+        $('form#signin').on('submit', (event) => {
+            event.preventDefault();
+            const btn_signin = event.originalEvent.submitter;
+            const data = prePost($('form#signin').serializeArray());
+            console.log('data =>', data);
+            //$(btn_signin).addClass('pulse');
+            $('#loading').show();
+        })
     }
 }
 customElements.define('sign-in', SignIn);

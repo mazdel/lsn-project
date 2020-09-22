@@ -40,7 +40,7 @@ class SignUp extends HTMLElement {
                         
                     </div>
                     <div class="card-content">
-                        <form class="login-form" >
+                        <form class="signup-form" >
                             <div class="row">
                                 <div class="form-title">
                                     <h5>Selamat Datang di ${this._site.name}</h5>
