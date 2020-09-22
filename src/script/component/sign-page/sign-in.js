@@ -67,7 +67,7 @@ class SignIn extends HTMLElement {
                         </div>
                         <div class="row">
                             <div class="input-field col s12">
-                                <a href="/dashboard.html" id="btn-login" class="btn green darken-1 waves-effect waves-light col s12 spage-action">Masuk</a>
+                                <a href="./dashboard.html" id="btn-login" class="btn green darken-1 waves-effect waves-light col s12 spage-action">Masuk</a>
                             </div>
                         </div>
                         <div class="row">
