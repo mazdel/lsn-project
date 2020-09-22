@@ -5,9 +5,6 @@ const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 module.exports = {
-    devServer: {
-        port: 8081,
-    },
     entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname, "dist/"),
