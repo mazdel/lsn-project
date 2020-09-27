@@ -1,7 +1,11 @@
-import 'select2';
-import 'select2/dist/css/select2.css';
-import '../../../style/materialize-select2.css';
+//import library
+import axios from 'axios';
+
+//import data wilayah
 import kabupaten from '../../data/kabupaten';
+
+//import helper
+import prePost from '../../helper/api-helper';
 
 class SignUp extends HTMLElement {
     constructor() {
@@ -40,7 +44,7 @@ class SignUp extends HTMLElement {
                         
                     </div>
                     <div class="card-content">
-                        <form class="signup-form" >
+                        <form id="signup" class="signup-form" >
                             <div class="row">
                                 <div class="form-title">
                                     <h5>Selamat Datang di ${this._site.name}</h5>
@@ -87,10 +91,10 @@ class SignUp extends HTMLElement {
                             <div class="row">
                                 <div class="input-field col s12" id="_kabupaten">
                                     <i class="material-icons prefix">location_on</i>
-                                    <select name="domisili_kab" id="domisili_kab" >
+                                    <select required name="domisili_kab" id="domisili_kab" >
                                         
                                     </select>
-                                    <label for="domisili_kab">Pilih Kab. Domisili</label>
+                                    <label for="domisili_kab">Pilih Kabupaten Domisili</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -100,13 +104,16 @@ class SignUp extends HTMLElement {
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
-                                    <a href="./dashboard.html" id="btn-login" class="btn green darken-1 waves-effect waves-light col s12 spage-action">Daftar</a>
+                                    <button type="submit" form="signup" id="btn-login" class="btn green darken-1 waves-effect waves-light col s12">Daftar</button>
                                 </div>
+                                <div class="progress" id="loading">
+                                <div class="indeterminate green darken-3"></div>
+                            </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s6 m6 l6">
                                     <p class="margin medium-small"><a class="green-text spage-action" href="#signin">Sudah punya akun?</a></p>
-                                </div>         
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -119,7 +126,7 @@ class SignUp extends HTMLElement {
             kabupaten().then(items => {
                 let selections = /*html*/ `
                     <i class="material-icons prefix">location_on</i>
-                    <select name="domisili_kec" id="domisili_kec" >
+                    <select required name="domisili_kec" id="domisili_kec" >
                         <option value="" disabled selected>Pilih Kecamatan</option>
                 `;
                 items.forEach((item) => {
@@ -133,12 +140,13 @@ class SignUp extends HTMLElement {
                     </select>
                     <label for="domisili_Kec">Pilih Kecamatan</label>`;
 
-                //console.log(selections);
+
                 $('div#_kecamatan').html(selections);
-                //$('select').select2({width: "70%"});
                 $('select').formSelect();
             });
         }
+
+        //show the kabupaten options
         kabupaten().then(items => {
             let selections = /*html*/ `<option value="" disabled selected>Pilih Kabupaten</option>`;
             items.forEach((item) => {
@@ -149,7 +157,6 @@ class SignUp extends HTMLElement {
 
             $('select').formSelect();
             $('select#domisili_kab').on(`change`, (event) => {
-
                 //solving bug that has been discussed here
                 //https://github.com/Dogfalo/materialize/issues/6123
                 const selectedIndex = M.FormSelect.getInstance($('select#domisili_kab')).el.selectedIndex;
@@ -157,6 +164,40 @@ class SignUp extends HTMLElement {
                 showKecamatan(selectedVal);
             })
         });
+
+        //for sending data to API
+        $(() => {
+            $('#loading').hide();
+        })
+        $('form#signup').on('submit', (event) => {
+            event.preventDefault();
+            const btn_signup = event.originalEvent.submitter;
+            const data = prePost($('form#signup').serializeArray());
+            console.log('data =>', data);
+
+            //show the loading progress
+            $('#loading').show();
+
+            //begin submit
+            const axiosOpt = {
+                method: 'post',
+                url: './api/signin',
+                data: data,
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            }
+
+            axios(axiosOpt).then(response => {
+                console.log(response.data);
+                if (response.data.status === true) {
+
+                }
+                $('#loading').hide();
+                $(btn_signup).text('Signed Up');
+            })
+
+        })
     }
 }
 customElements.define('sign-up', SignUp);

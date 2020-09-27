@@ -1,10 +1,10 @@
 const kabupaten = (id = 35) => {
     return import (`../../data/data-indonesia-master/kabupaten/${id}.json`)
         .then(kabupaten => {
-            let promises = [];
+            let sub_districts = [];
             kabupaten.default.forEach((kab, i) => {
                 //if (kab.id == 3509 || kab.id == 3508) {
-                const promise =
+                const sub_district =
                     import (`../../data/data-indonesia-master/kecamatan/${kab.id}.json`)
                     .then(kecamatan => {
                         const dataKab = {
@@ -14,10 +14,10 @@ const kabupaten = (id = 35) => {
                         }
                         return dataKab;
                     })
-                promises.push(promise);
+                sub_districts.push(sub_district);
                 //}
             })
-            return Promise.all(promises).then(resolveds => {
+            return Promise.all(sub_districts).then(resolveds => {
                 let data = [];
                 resolveds.forEach((val, i) => {
                     data.push(val);

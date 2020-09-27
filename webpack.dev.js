@@ -8,7 +8,6 @@ module.exports = merge(common, {
         proxy: {
             '/api': {
                 target: 'http://localhost/0.1.kerjaan/01.sismana/ci4-sismana/public/',
-
             }
         }
     },

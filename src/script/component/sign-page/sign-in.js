@@ -49,7 +49,7 @@ class SignIn extends HTMLElement {
                         <div class="row">
                             <div class="input-field col s12">
                                 <i class="material-icons prefix">person_outline</i>
-                                <input required class="validate" name="username" id="username" type="text" pattern="[0-9]{16}" title="16 nomor NIK">
+                                <input required class="validate" name="username" id="username" type="text" title="16 nomor NIK atau username Anda">
                                 <label for="username" data-error="wrong" data-success="right">Nomor Induk Kependudukan</label>
                             </div>
                         </div>
@@ -62,10 +62,12 @@ class SignIn extends HTMLElement {
                         </div>
                         <div class="row">          
                             <div class="input-field col s12 m12 l12  login-text">
+                                <!--
                                 <label for="remember-me">
                                     <input type="checkbox" name="rememberMe" id="remember-me" />
                                     <span>Ingat saya</span>
                                 </label>
+                                -->
                             </div>
                         </div>
                         <div class="row">
@@ -94,14 +96,37 @@ class SignIn extends HTMLElement {
         `);
         $(() => {
             $('#loading').hide();
+            if (sessionStorage.getItem('nik')) {
+                $('#btn-signin').text('Signed in');
+
+            }
         })
         $('form#signin').on('submit', (event) => {
             event.preventDefault();
             const btn_signin = event.originalEvent.submitter;
             const data = prePost($('form#signin').serializeArray());
-            console.log('data =>', data);
-            //$(btn_signin).addClass('pulse');
+
             $('#loading').show();
+            const axiosOpt = {
+                method: 'post',
+                url: './api/signin',
+                data: data,
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            }
+            axios(axiosOpt).then(response => {
+
+                if (response.data.status === true) {
+                    const signedin = response.data.signedin;
+                    Object.entries(signedin).forEach((entry) => {
+                        const [key, item] = entry;
+                        sessionStorage.setItem(key, item);
+                    });
+                }
+                $('#loading').hide();
+                $(btn_signin).text('Signed in');
+            })
         })
     }
 }
