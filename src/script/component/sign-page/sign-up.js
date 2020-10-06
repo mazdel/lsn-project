@@ -56,45 +56,51 @@ class SignUp extends HTMLElement {
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">card_membership</i>
-                                    <input required class="validate" name="nik" id="nik" type="text" pattern="[0-9]{16}">
+                                    <input aria-required="true" required class="validate" name="nik" id="nik" type="text" pattern="[0-9]{16}">
                                     <label for="nik" data-error="wrong" data-success="right">Nomor Induk Kependudukan*</label>
+                                    <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">person_outline</i>
-                                    <input required class="validate" name="nama" id="nama" type="text">
+                                    <input aria-required="true" required class="validate" name="nama" id="nama" type="text">
                                     <label for="nik" data-error="wrong" data-success="right">Nama Lengkap*</label>
+                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">smartphone</i>
-                                    <input required class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
+                                    <input aria-required="true" required class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
                                     <label for="telp" data-error="wrong" data-success="right">No.HP* (0856xxxxx)</label>
+                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">lock_outline</i>
-                                    <input required id="password" name="password" type="password">
+                                    <input aria-required="true" required id="password" name="password" type="password">
                                     <label for="password">Kata Sandi*</label>
+                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">lock_outline</i>
-                                    <input required id="passwordConf" name="passwordConf" type="password">
+                                    <input aria-required="true" required id="passwordConf" name="passwordConf" type="password">
                                     <label for="password">Ulangi Kata Sandi*</label>
+                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s12" id="_kabupaten">
                                     <i class="material-icons prefix">location_on</i>
-                                    <select required name="domisili_kab" id="domisili_kab" >
+                                    <select aria-required="true" aria-required="true" required name="domisili_kab" id="domisili_kab" >
                                         
                                     </select>
                                     <label for="domisili_kab">Pilih Kabupaten Domisili</label>
+                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
@@ -120,6 +126,16 @@ class SignUp extends HTMLElement {
                 </div>
             </div>
         </div>
+        <!-- Modal Error -->
+        <div id="modal_error" class="modal">
+            <div class="modal-content">
+                <h4>Gagal!</h4>
+                <p id="message"></p>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Oke</a>
+            </div>
+        </div>
         `);
         //untuk menampilkan kecamatan setiap ganti kabupaten
         const showKecamatan = (id = 3509) => {
@@ -138,7 +154,9 @@ class SignUp extends HTMLElement {
                 });
                 selections += /*html*/ `
                     </select>
-                    <label for="domisili_Kec">Pilih Kecamatan</label>`;
+                    <label for="domisili_Kec">Pilih Kecamatan</label>
+                    
+                    `;
 
 
                 $('div#_kecamatan').html(selections);
@@ -168,35 +186,52 @@ class SignUp extends HTMLElement {
         //for sending data to API
         $(() => {
             $('#loading').hide();
+            $('span.helper-text').hide();
         })
         $('form#signup').on('submit', (event) => {
             event.preventDefault();
             const btn_signup = event.originalEvent.submitter;
             const data = prePost($('form#signup').serializeArray());
-            console.log('data =>', data);
+            $('span.helper-text').hide();
 
             //show the loading progress
             $('#loading').show();
 
             //begin submit
             const axiosOpt = {
-                method: 'post',
-                url: './api/signin',
-                data: data,
-                headers: {
-                    'Content-type': 'application/json',
+                    method: 'post',
+                    url: './api/signup',
+                    data: data,
+                    headers: {
+                        'Content-type': 'application/json',
+                    }
                 }
-            }
-
+                //tes komunikasi dengan API dulu
             axios(axiosOpt).then(response => {
-                console.log(response.data);
-                if (response.data.status === true) {
+                    const data = response.data;
 
-                }
-                $('#loading').hide();
-                $(btn_signup).text('Signed Up');
-            })
+                    console.log(data.status);
+                    if (data.status == true) {
+                        $(btn_signup).text('Signed Up');
+                    } else {
+                        for (const key in data.response) {
+                            if (data.response.hasOwnProperty(key)) {
+                                const message = data.response[key];
+                                const msgElement = $(`input#${key}`).siblings('span');
+                                msgElement.text(`${message}`);
+                                msgElement.show();
+                                console.log(key, message);
+                            }
+                        }
+                    }
+                    $('#loading').hide();
 
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                    console.log(error.data);
+                    $('#loading').hide();
+                })
         })
     }
 }

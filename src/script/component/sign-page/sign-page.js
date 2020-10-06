@@ -49,7 +49,7 @@ class SignPage extends HTMLElement {
 
         $('.spage-action').each((key, elm) => {
             $(elm).on('click', () => {
-                const pageToGo = $(elm).attr('href').substr(1);
+                const pageToGo = $(elm).attr('href').substr($(elm).attr('href').indexOf('#') + 1);
                 this.page = pageToGo;
             });
         });

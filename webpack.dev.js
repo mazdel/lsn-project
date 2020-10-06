@@ -9,6 +9,11 @@ module.exports = merge(common, {
             '/api': {
                 target: 'http://localhost/0.1.kerjaan/01.sismana/ci4-sismana/public/',
             }
+        },
+        historyApiFallback: {
+            rewrites: [
+                { from: /\/main\/dashboard/, to: '/dashboard.html' }
+            ]
         }
     },
 

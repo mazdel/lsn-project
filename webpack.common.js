@@ -8,7 +8,8 @@ module.exports = {
     entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname, "dist/"),
-        filename: "src/js/bundle.js"
+        filename: "src/js/bundle.js",
+        publicPath: ""
     },
     /*	mode:"production",*/
     module: {
@@ -100,7 +101,9 @@ module.exports = {
                 removeScriptTypeAttributes: true,
                 removeStyleLinkTypeAttributes: true,
                 useShortDoctype: false
-            }
+            },
+            //publicPath: '../',
+            base: '../',
         }),
         new webpack.ProvidePlugin({
             $: 'jquery',

@@ -51,6 +51,7 @@ class SignIn extends HTMLElement {
                                 <i class="material-icons prefix">person_outline</i>
                                 <input required class="validate" name="username" id="username" type="text" title="16 nomor NIK atau username Anda">
                                 <label for="username" data-error="wrong" data-success="right">Nomor Induk Kependudukan</label>
+                                <span class="helper-text">Helper text</span>
                             </div>
                         </div>
                         <div class="row">
@@ -58,6 +59,7 @@ class SignIn extends HTMLElement {
                                 <i class="material-icons prefix">lock_outline</i>
                                 <input required id="password" name="password" type="password">
                                 <label for="password">Kata Sandi</label>
+                                <span class="helper-text">Helper text</span>
                             </div>
                         </div>
                         <div class="row">          
@@ -96,15 +98,17 @@ class SignIn extends HTMLElement {
         `);
         $(() => {
             $('#loading').hide();
+            $(`input`).siblings('span').hide();
             if (sessionStorage.getItem('nik')) {
                 $('#btn-signin').text('Signed in');
-
             }
+
         })
         $('form#signin').on('submit', (event) => {
             event.preventDefault();
             const btn_signin = event.originalEvent.submitter;
             const data = prePost($('form#signin').serializeArray());
+            $(`input`).siblings('span').hide();
 
             $('#loading').show();
             const axiosOpt = {
@@ -116,16 +120,26 @@ class SignIn extends HTMLElement {
                 }
             }
             axios(axiosOpt).then(response => {
-
-                if (response.data.status === true) {
-                    const signedin = response.data.signedin;
+                const data = response.data;
+                if (data.status === true) {
+                    const signedin = data.signedin;
                     Object.entries(signedin).forEach((entry) => {
                         const [key, item] = entry;
                         sessionStorage.setItem(key, item);
                     });
+                    $(btn_signin).text('Signed in');
+                } else {
+                    for (const key in data.response) {
+                        if (data.response.hasOwnProperty(key)) {
+                            const message = data.response[key];
+                            const msgElement = $(`input#${key}`).siblings('span');
+                            msgElement.text(`${message}`);
+                            msgElement.show();
+                            console.log(key, message);
+                        }
+                    }
                 }
                 $('#loading').hide();
-                $(btn_signin).text('Signed in');
             })
         })
     }
