@@ -169,7 +169,6 @@ class SignUp extends HTMLElement {
             let selections = /*html*/ `<option value="" disabled selected>Pilih Kabupaten</option>`;
             items.forEach((item) => {
                 selections += /*html*/ `<option value="${item.id}">${item.nama}</option>`
-                    //console.log(item);
             })
             $('select#domisili_kab').html(selections);
 
@@ -210,9 +209,9 @@ class SignUp extends HTMLElement {
             axios(axiosOpt).then(response => {
                     const data = response.data;
 
-                    console.log(data.status);
                     if (data.status == true) {
                         $(btn_signup).text('Signed Up');
+
                     } else {
                         for (const key in data.response) {
                             if (data.response.hasOwnProperty(key)) {
@@ -220,12 +219,10 @@ class SignUp extends HTMLElement {
                                 const msgElement = $(`input#${key}`).siblings('span');
                                 msgElement.text(`${message}`);
                                 msgElement.show();
-                                console.log(key, message);
                             }
                         }
                     }
                     $('#loading').hide();
-
                 })
                 .catch((error) => {
                     console.log(error.response);

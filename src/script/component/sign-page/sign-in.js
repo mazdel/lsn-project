@@ -122,12 +122,9 @@ class SignIn extends HTMLElement {
             axios(axiosOpt).then(response => {
                 const data = response.data;
                 if (data.status === true) {
-                    const signedin = data.signedin;
-                    Object.entries(signedin).forEach((entry) => {
-                        const [key, item] = entry;
-                        sessionStorage.setItem(key, item);
-                    });
+                    window.open('./main/dasboard', '_self');
                     $(btn_signin).text('Signed in');
+                    location.href = `${location.origin}${data.redirect}`;
                 } else {
                     for (const key in data.response) {
                         if (data.response.hasOwnProperty(key)) {
@@ -135,7 +132,7 @@ class SignIn extends HTMLElement {
                             const msgElement = $(`input#${key}`).siblings('span');
                             msgElement.text(`${message}`);
                             msgElement.show();
-                            console.log(key, message);
+
                         }
                     }
                 }

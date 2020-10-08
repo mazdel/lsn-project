@@ -82,26 +82,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./src/pages/index.html",
             filename: "index.html",
-            minify: {
-                collapseWhitespace: false,
-                removeComments: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                useShortDoctype: false
-            }
         }),
         new HtmlWebpackPlugin({
             template: "./src/pages/dashboard_admin.html",
             filename: "dashboard.html",
-            minify: {
-                collapseWhitespace: false,
-                removeComments: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                useShortDoctype: false
-            },
             //publicPath: '../',
             base: '../',
         }),
