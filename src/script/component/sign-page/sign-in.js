@@ -113,7 +113,7 @@ class SignIn extends HTMLElement {
             $('#loading').show();
             const axiosOpt = {
                 method: 'post',
-                url: './api/signin',
+                url: `${document.baseURI}api/signin`,
                 data: data,
                 headers: {
                     'Content-type': 'application/json',
@@ -122,9 +122,11 @@ class SignIn extends HTMLElement {
             axios(axiosOpt).then(response => {
                 const data = response.data;
                 if (data.status === true) {
-                    window.open('./main/dasboard', '_self');
-                    $(btn_signin).text('Signed in');
-                    location.href = `${location.origin}${data.redirect}`;
+
+                    $(btn_signin).text(`${data.response}`);
+                    setTimeout(() => {
+                        location.href = `${location.origin}${location.pathname}${data.redirect}`;
+                    }, 1000);
                 } else {
                     for (const key in data.response) {
                         if (data.response.hasOwnProperty(key)) {
@@ -137,6 +139,8 @@ class SignIn extends HTMLElement {
                     }
                 }
                 $('#loading').hide();
+            }).catch(error => {
+                console.error(error);
             })
         })
     }

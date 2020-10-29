@@ -1,0 +1,184 @@
+import kabupaten from '../../data/kabupaten';
+
+class FormDataMember extends HTMLElement {
+    constructor() {
+        super();
+
+    }
+    connectedCallback() {
+        this.id = $(this).attr("id") || "";
+        this.class = $(this).attr("class") || "";
+        this.formId = $(this).data('formId') || "";
+        $(this).attr("class", this.class);
+        this.render();
+    }
+    disconnectedCallback() {
+
+    }
+    adoptedCallback() {
+
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+
+    }
+    static get observedAttributes() {
+        return ['src', 'id', 'name', 'class'];
+    }
+
+    set form(form = { type: "add", data, id: this.formId }) {
+        this._form = form;
+    }
+    render() {
+        const form = this._form;
+        let data = { nik: "", nama: "", telp: "" },
+            passwordField = ``;
+        if (form.type == "edit") {
+            data = form.data;
+            passwordField = /*html*/ `
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="input-radio-inline">
+                            <i class="material-icons prefix">lock_outline</i>
+                            <label for="reset-pass-yes-${form.id}">
+                                <input aria-required="true" value="Y" class="validate" name="resetpass" id="reset-pass-yes-${form.id}" type="radio"><span>Ya, reset password</span>
+                            </label>
+                            <label for="reset-pass-no-${form.id}">
+                                <input aria-required="true" value="N" checked class="validate" name="resetpass" id="reset-pass-no-${form.id}" type="radio"><span>Tidak, biarkan Saja</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            passwordField = /*html */ `
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">lock_outline</i>
+                        <input aria-required="true" id="password-${form.id}" name="password" type="password">
+                        <label for="password-${form.id}">Kata Sandi</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">lock_outline</i>
+                        <input aria-required="true" id="passwordConf-${form.id}" name="passwordConf" type="password">
+                        <label for="password-${form.id}">Ulangi Kata Sandi</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+            `;
+        }
+        $(this).html( /*html */ `
+            <form class="" id="${form.id}">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="prefix fas fa-id-card"></i>
+                        <input aria-required="true" required class="validate" name="nik" id="nik-${form.id}" type="text" pattern="[0-9]{16}" value="${data.nik||""}">
+                        <label for="nik-${form.id}" data-error="wrong" data-success="right">Nomor Induk Kependudukan*</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">person_outline</i>
+                        <input value="${data.nama||""}" aria-required="true" required class="validate" name="nama" id="nama-${form.id}" type="text">
+                        <label for="nama-${form.id}" data-error="wrong" data-success="right">Nama Lengkap*</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <div class="input-radio-inline">
+                            <i class="fas fa-venus-mars"></i>
+                            <label for="gender-pria-${form.id}">
+                                <input aria-required="true" value="L" ${(data.gender=='L')?'checked':''} class="validate" name="gender" id="gender-pria-${form.id}" type="radio"><span>Pria</span>
+                            </label>
+                            <label for="gender-wanita-${form.id}">
+                                <input aria-required="true" value="P" ${(data.gender=='P')?'checked':''} class="validate" name="gender" id="gender-wanita-${form.id}" type="radio"><span>Wanita</span>
+                            </label>
+                        </div>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">smartphone</i>
+                        <input value="${data.telp||""}" aria-required="true" required class="validate" name="telp" id="telp-${form.id}" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
+                        <label for="telp-${form.id}" data-error="wrong" data-success="right">No.HP* (0856xxxxx)</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+                ${passwordField}
+                <div class="row">
+                    <div class="input-field col s12" id="_kabupaten-${form.id}">
+                        <i class="material-icons prefix">location_on</i>
+                        <select aria-required="true" aria-required="true" required name="domisili_kab" id="domisili_kab-${form.id}" >
+                            
+                        </select>
+                        <label for="domisili_kab-${form.id}">Pilih Kabupaten Domisili</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+                    <div class="row">
+                        <div class="input-field col s12" id="_kecamatan-${form.id}">
+                            
+                        </div>
+                    </div>
+                    <div class="progress" id="addMemberLoading-${form.id}">
+                        <div class="indeterminate green darken-3"></div>
+                    </div>
+                </form>
+        `);
+
+        $(`#addMemberLoading-${form.id}`).hide();
+        $('.helper-text').hide();
+        M.updateTextFields();
+        //menampilkan kecamatan setiap ganti kabupaten
+        //buggy here
+        console.log()
+        const showKecamatan = (id = 3509) => {
+            kabupaten().then(items => {
+                let selections = `
+                    <i class="material-icons prefix">location_on</i>
+                    <select name="domisili_kec" id="domisili_kec-${form.id}" >
+                        <option value="" disabled ${data.domisili_kec_id?'':'selected'}>Pilih Kecamatan</option>
+                `;
+                items.forEach((item) => {
+                    if (item.id == id) {
+                        item.kecamatan.forEach(kecamatan => {
+                            selections += `<option value="${kecamatan.id}" ${(kecamatan.id==data.domisili_kec_id)?'selected':''}>${kecamatan.nama}</option>`
+                        })
+                    }
+                });
+                selections += `
+                    </select>
+                    <label for="domisili_kec-${form.id}">Pilih Kecamatan</label>
+                    `;
+                $(`div#_kecamatan-${form.id}`).html(selections);
+                $('select').formSelect();
+            });
+        }
+        kabupaten().then(items => {
+            let selections = `<option value="" disabled ${data.domisili_kab_id?'':'selected'}>Pilih Kabupaten</option>`;
+            items.forEach((item) => {
+                selections += `<option value="${item.id}" ${(item.id==data.domisili_kab_id)?'selected':''}>${item.nama}</option>`
+            })
+            $(`select#domisili_kab-${form.id}`).html(selections);
+            $('select').formSelect();
+
+            $(`select#domisili_kab-${form.id}`).on(`change`, (event) => {
+                event.stopPropagation();
+                const selectedIndex = M.FormSelect.getInstance($(`select#domisili_kab-${form.id}`)).el.selectedIndex;
+                const selectedVal = $(`select#domisili_kab-${form.id}`).children().eq(selectedIndex).val();
+                showKecamatan(selectedVal);
+            })
+            if (data.domisili_kab_id) {
+                showKecamatan(data.domisili_kab_id);
+            }
+        });
+
+
+    }
+}
+customElements.define('form-data-member', FormDataMember);

@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import SideNavHelper from '../../helper/sidenav-helper';
 import site from '../../data/site-data';
 import IconHelper from '../../helper/icon-helper';
@@ -30,7 +32,7 @@ class SideNav extends HTMLElement {
         let sidemenu = '',
             _group;
 
-        site.dummy.sidenav.forEach(menu => {
+        site.dummy.sidenav.admin.forEach(menu => {
             let icon = IconHelper.icon(menu.icon, menu.icon_type);
 
             //shorthand untuk mengisi variabel _group apabila masih kosong
@@ -53,9 +55,9 @@ class SideNav extends HTMLElement {
                     <div class="background">
                     <img src="src/img/lsn-banner.jpg">
                     </div>
-                    <a href="#user"><img class="circle" src="src/img/avatars/avatar1.png"></a>
-                    <a href="#name"><span class="white-text name">John Emblo</span></a>
-                    <a href="#email"><span class="white-text email">johnemblo@gmail.com</span></a>
+                    <img id="fotoProfil" class="circle" src="src/img/avatars/avatar1.png">
+                    <span id="nama" class="white-text name">Nama</span>
+                    <span id="phone" class="white-text email">+628xxxx</span>
                 </div>
             </li>
             ${sidemenu}
@@ -79,7 +81,33 @@ class SideNav extends HTMLElement {
 
             });
         });
-        $(document).ready(() => {
+
+        $(() => {
+            /**get session data */
+            const axiosOpt = {
+                method: 'post',
+                url: `${document.baseURI}api/getsession`,
+                data: null,
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            }
+            axios(axiosOpt).then(response => {
+                    const data = response.data.signedin;
+
+                    const fotoProfil = data.foto_profil;
+                    const nama = data.nama || data.username || data.nik;
+                    const phone = data.telp;
+                    if (fotoProfil != null) {
+                        $('#fotoProfil').attr('src', `${fotoProfil}`);
+                    }
+                    $('#nama').text(`${nama}`);
+                    $('#phone').text(`${phone}`);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+                /**./get session data */
             $('.sidenav').sidenav({ inDuration: 500, outDuration: 500 });
             $('header').addClass('sideEffect');
             $('main').addClass('sideEffect');

@@ -2,7 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require('webpack');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+
 
 module.exports = {
     entry: "./src/index.js",
@@ -82,12 +82,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: "./src/pages/index.html",
             filename: "index.html",
-        }),
-        new HtmlWebpackPlugin({
-            template: "./src/pages/dashboard_admin.html",
-            filename: "dashboard.html",
-            //publicPath: '../',
-            base: '../',
+            favicon: './src/img/logo/icon.png',
         }),
         new webpack.ProvidePlugin({
             $: 'jquery',
@@ -97,11 +92,6 @@ module.exports = {
         }),
         new MomentLocalesPlugin({
             localesToKeep: ['id'],
-        }),
-        new FaviconsWebpackPlugin({
-            logo: './src/img/logo/icon.png',
-            outputPath: 'src/img/logo/',
-            inject: true
         })
     ]
 }

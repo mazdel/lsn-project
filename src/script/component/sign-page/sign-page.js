@@ -30,7 +30,7 @@ class SignPage extends HTMLElement {
         this.render();
     }
     render() {
-        let page;
+        let page = "";
         switch (this._page) {
             case 'signin':
                 page = `<sign-in></sign-in>`

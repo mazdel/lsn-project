@@ -1,29 +1,31 @@
-class TemPlate extends HTMLElement{
-    constructor(){
+class TemPlate extends HTMLElement {
+    constructor() {
         super();
     }
-    connectedCallback(){
-        this.id = $(this).attr("id")||"template";
-        this.class = $(this).attr("class")||"";
-        $(this).attr("class",this.class);
+    connectedCallback() {
+        this.id = $(this).attr("id") || "template";
+        this.class = $(this).attr("class") || "";
+        $(this).attr("class", this.class);
         this.render();
     }
-    disconnectedCallback(){
-        
-    }
-    adoptedCallback(){
+    disconnectedCallback() {
 
     }
-    attributeChangedCallback(name,oldValue,newValue){
+    adoptedCallback() {
 
     }
-    static get observedAttributes(){
-        return ['src','id','name','class'];
+    attributeChangedCallback(name, oldValue, newValue) {
+
     }
-    
-    render(){
-        $(this).html(`
+    static get observedAttributes() {
+        return ['src', 'id', 'name', 'class'];
+    }
+    set data(data) {
+        this._data = data;
+    }
+    render() {
+        $(this).html( /*html*/ `
         `);
     }
 }
-customElements.define('tem-plate',TemPlate);
+customElements.define('tem-plate', TemPlate);

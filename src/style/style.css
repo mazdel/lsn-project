@@ -23,6 +23,7 @@ body#sign-page {
     background-color: #4caf50;
 }
 
+.modal-footer>button:hover,
 a:hover {
     text-decoration: none;
     font-weight: bolder;
@@ -88,10 +89,16 @@ a#sidenav-burger-wide {
     margin: 0 18px;
 }
 
-side-nav li>a>i.fa,
-side-nav li>a>i.fas,
-side-nav li>a>i.far {
+side-nav li>a>.fa,
+side-nav li>a>.fas,
+side-nav li>a>.far {
     font-size: 23px;
+}
+
+.input-field .fa,
+.input-field .fas,
+.input-field .far {
+    font-size: 1.5rem;
 }
 
 .smoothly {
@@ -119,6 +126,20 @@ dash-board .card h6 {
 
 .modal {
     border-radius: 20px;
+}
+
+.modal-member-view {
+    margin-top: 10vh;
+    font-size: large;
+}
+
+.modal-member-view img.rounded {
+    border-radius: 100%;
+}
+
+.input-radio-inline,
+.inline {
+    display: inline;
 }
 
 @media only screen and (max-width: 992px) {

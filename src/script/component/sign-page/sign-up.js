@@ -55,7 +55,7 @@ class SignUp extends HTMLElement {
                             </div>
                             <div class="row">
                                 <div class="input-field col s12">
-                                    <i class="material-icons prefix">card_membership</i>
+                                    <i class="prefix fas fa-id-card "></i>
                                     <input aria-required="true" required class="validate" name="nik" id="nik" type="text" pattern="[0-9]{16}">
                                     <label for="nik" data-error="wrong" data-success="right">Nomor Induk Kependudukan*</label>
                                     <span class="helper-text">Helper text</span>
@@ -66,7 +66,21 @@ class SignUp extends HTMLElement {
                                     <i class="material-icons prefix">person_outline</i>
                                     <input aria-required="true" required class="validate" name="nama" id="nama" type="text">
                                     <label for="nik" data-error="wrong" data-success="right">Nama Lengkap*</label>
-                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
+                                    <span class="helper-text">Helper text</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <div class="input-radio-inline">
+                                        <i class="fas fa-venus-mars prefix"></i>
+                                        <label for="gender-pria">
+                                            <input aria-required="true" value="L" checked class="validate" name="gender" id="gender-pria" type="radio"><span>Pria</span>
+                                        </label>
+                                        <label for="gender-wanita">
+                                            <input aria-required="true" value="P" class="validate" name="gender" id="gender-wanita" type="radio"><span>Wanita</span>
+                                        </label>
+                                    </div>
+                                    <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
@@ -74,7 +88,7 @@ class SignUp extends HTMLElement {
                                     <i class="material-icons prefix">smartphone</i>
                                     <input aria-required="true" required class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
                                     <label for="telp" data-error="wrong" data-success="right">No.HP* (0856xxxxx)</label>
-                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
+                                    <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
@@ -82,7 +96,7 @@ class SignUp extends HTMLElement {
                                     <i class="material-icons prefix">lock_outline</i>
                                     <input aria-required="true" required id="password" name="password" type="password">
                                     <label for="password">Kata Sandi*</label>
-                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
+                                    <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
@@ -90,7 +104,7 @@ class SignUp extends HTMLElement {
                                     <i class="material-icons prefix">lock_outline</i>
                                     <input aria-required="true" required id="passwordConf" name="passwordConf" type="password">
                                     <label for="password">Ulangi Kata Sandi*</label>
-                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
+                                    <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
@@ -100,7 +114,7 @@ class SignUp extends HTMLElement {
                                         
                                     </select>
                                     <label for="domisili_kab">Pilih Kabupaten Domisili</label>
-                                    <span class="helper-text" data-error="wrong" data-success="right">Helper text</span>
+                                    <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
                             <div class="row">
@@ -113,8 +127,8 @@ class SignUp extends HTMLElement {
                                     <button type="submit" form="signup" id="btn-login" class="btn green darken-1 waves-effect waves-light col s12">Daftar</button>
                                 </div>
                                 <div class="progress" id="loading">
-                                <div class="indeterminate green darken-3"></div>
-                            </div>
+                                    <div class="indeterminate green darken-3"></div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s6 m6 l6">
@@ -126,16 +140,7 @@ class SignUp extends HTMLElement {
                 </div>
             </div>
         </div>
-        <!-- Modal Error -->
-        <div id="modal_error" class="modal">
-            <div class="modal-content">
-                <h4>Gagal!</h4>
-                <p id="message"></p>
-            </div>
-            <div class="modal-footer">
-                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Oke</a>
-            </div>
-        </div>
+        
         `);
         //untuk menampilkan kecamatan setiap ganti kabupaten
         const showKecamatan = (id = 3509) => {
@@ -199,7 +204,7 @@ class SignUp extends HTMLElement {
             //begin submit
             const axiosOpt = {
                     method: 'post',
-                    url: './api/signup',
+                    url: `${document.baseURI}api/signup`,
                     data: data,
                     headers: {
                         'Content-type': 'application/json',
@@ -210,14 +215,18 @@ class SignUp extends HTMLElement {
                     const data = response.data;
 
                     if (data.status == true) {
-                        $(btn_signup).text('Signed Up');
+                        $(btn_signup).text('Pendaftaran berhasil, silahkan kembali ke halaman login');
 
                     } else {
                         for (const key in data.response) {
                             if (data.response.hasOwnProperty(key)) {
                                 const message = data.response[key];
-                                const msgElement = $(`input#${key}`).siblings('span');
-                                msgElement.text(`${message}`);
+                                const msgElement = $(`
+                                input# $ { key }
+                                `).siblings('span');
+                                msgElement.text(`
+                                $ { message }
+                                `);
                                 msgElement.show();
                             }
                         }

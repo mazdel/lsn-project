@@ -4,12 +4,14 @@ const common = require("./webpack.common.js");
 const MinifyPlugin = require('babel-minify-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const filemanagerPlugin = require('filemanager-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = merge(common, {
     mode: "production",
+
     module: {
         rules: [
-            /**babel loader */
+            //babel loader
             {
                 test: /\.js$/,
                 exclude: "/node_modules/",
@@ -22,12 +24,19 @@ module.exports = merge(common, {
             }
         ]
     },
+
     plugins: [
         new MinifyPlugin(),
         new CopyPlugin({
             patterns: [
                 { from: 'src/img/', to: 'src/img' }
             ]
+        }),
+        new HtmlWebpackPlugin({
+            template: "./src/pages/dashboard_admin.html",
+            filename: "dashboard.html",
+            favicon: './src/img/logo/icon.png',
+            base: '../',
         }),
         new filemanagerPlugin({
             onEnd: {

@@ -17,7 +17,7 @@ import './style/style.css';
 import dashboard from './script/view/dashboard';
 
 
-$(document).ready(() => {
+$(() => {
     main();
 
     $('.timepicker').timepicker({

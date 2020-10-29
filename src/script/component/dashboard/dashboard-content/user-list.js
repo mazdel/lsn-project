@@ -1,108 +1,88 @@
+import axios from 'axios';
+
 import site from '../../../data/site-data';
 import kabupaten from '../../../data/kabupaten';
+import prePost from '../../../helper/api-helper';
 
-class UserList extends HTMLElement{
-    constructor(){
+/* import component */
+import './modal-member';
+
+class UserList extends HTMLElement {
+    constructor() {
         super();
     }
-    connectedCallback(){
-        this.id = $(this).attr("id")||"user-list";
-        this.class = $(this).attr("class")||"";
-        $(this).attr("class",this.class);
-        
+    connectedCallback() {
+        this.id = $(this).attr("id") || "user-list";
+        this.class = $(this).attr("class") || "";
+        $(this).attr("class", this.class);
+        this.dataCount = 5;
+        this.currentPage = 1;
         this.render();
     }
-    disconnectedCallback(){
-        
-    }
-    adoptedCallback(){
+    disconnectedCallback() {
 
     }
-    attributeChangedCallback(name,oldValue,newValue){
+    adoptedCallback() {
 
     }
-    static get observedAttributes(){
-        return ['src','id','name','class'];
+    attributeChangedCallback(name, oldValue, newValue) {
+
     }
-    set site(data){
-        this._site=data;
+    static get observedAttributes() {
+        return ['src', 'id', 'name', 'class'];
+    }
+    set site(data) {
+        this._site = data;
         //this.render();
     }
-    render(){
-        let user_list ='',user_modal='';
-        site.dummy.user.forEach((user,key)=>{
-            user_list+=/*html*/`
-            <tr>
-                <td>${key+1}</td>
-                <td>${user.fullname}</td>
-                <td>${user.domisili_kab}</td>
-                <td>
-                    <div class="white-text center">
-                        <a href="#viewUser${user.id}" class="modal-trigger waves-effect btn-flat waves-light blue btn-small">
-                        <i class="material-icons">visibility</i>
-                        </a>
-                        <a href="#editUser${user.id}" class="modal-trigger waves-effect btn-flat waves-light green btn-small">
-                            <i class="material-icons">edit</i>
-                        </a>
-                        <a href="#delUser${user.id}" class="modal-trigger waves-effect btn-flat waves-light red btn-small">
-                            <i class="material-icons">delete</i>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            `;
-            user_modal+=/*html*/`
-            <div id="viewUser${user.id}" class="modal modal-fixed-footer">
-                <div class="modal-content">
-                    <h4>Lihat detail anggota ${user.fullname}</h4>
-                    
-                </div>
-                <div class="modal-footer">
-                    <a class="modal-close waves-effect waves-green btn-flat">Tutup</a>
-                </div>
-            </div>
-            <div id="editUser${user.id}" class="modal modal-fixed-footer">
-                <div class="modal-content">
-                    <h4>Edit data anggota ${user.fullname}</h4>
-                    
-                </div>
-                <div class="modal-footer">
-                    <a class="modal-close waves-effect waves-green btn-flat">Batal</a>
-                    <a id="submitEdit" data-identity="${user.id}" class="modal-close waves-effect waves-green btn-flat">Submit</a>
-                </div>
-            </div>
-            <div id="delUser${user.id}" class="modal modal-fixed-footer">
-                <div class="modal-content">
-                    <h4>Anda yakin menghapus anggota ${user.fullname}?</h4>
-                    
-                </div>
-                <div class="modal-footer">
-                    <a class="modal-close waves-effect waves-green btn-flat">Tidak</a>
-                    <a class="modal-close waves-effect waves-green btn-flat">Ya, saya yakin</a>
-                </div>
-            </div>
-            `
-        })
-        $(this).html(/*html*/`
+
+    render() {
+        $(this).html( /*html*/ `
         <div class="green lighten-5">
             <div class="row d block">
                 <div class="col s12 m12 l12">
                     <div class="card">
                         <div class="card-content black-text">
                             <span class="card-title">Daftar Anggota LSN</span>
-                            <table class="responsive-table">
+                            <table class="responsive-table striped">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th>Nama</th>
+                                        <th>NIK</th>
                                         <th>Domisili</th>
                                         <th class="center">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    ${user_list}
+                                <tbody id="user-table-data">
+                                    
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="card-action">
+                            <div class="row">
+                                <div class="col s4 m4 left-align">
+                                    <button id="firstPage" class="btn-pagination btn white-text btn-flat green darken-1 btn-small waves-effect waves-light"> 
+                                    <i class="material-icons">first_page</i>
+                                </button>
+                                    <button data-page="1" id="prevPage" class="btn-pagination btn white-text btn-flat green darken-1 btn-small waves-effect waves-light"> 
+                                        <i class="material-icons">chevron_left</i>
+                                    </button>
+                                </div>
+                                <div  id="pagination" class="col s4 m4">
+                                    <div class="progress" id="pageLoading">
+                                        <div class="indeterminate green darken-3"></div>
+                                    </div>
+                                </div>
+                                <div class="col s4 m4 right-align">
+                                    <button data-page="2" id="nextPage" class="btn-pagination btn white-text btn-flat green darken-1 btn-small waves-effect waves-light"> 
+                                        <i class="material-icons">chevron_right</i>
+                                    </button>
+                                    <button id="lastPage" class="btn-pagination btn white-text btn-flat green darken-1 btn-small waves-effect waves-light"> 
+                                        <i class="material-icons">last_page</i>
+                                    </button>
+                                </div>
+                            <div>
                         </div>
                     </div>
                 </div>
@@ -114,9 +94,12 @@ class UserList extends HTMLElement{
                 <i class="large material-icons">menu</i>
             </a>
             <ul>
-                <li><a class="btn-floating blue tooltipped modal-trigger" href="#modal1" data-position="left" data-tooltip="Tambah Anggota">
-                    <i class="material-icons">person_add</i>
-                </a></li>
+                <li>
+                    <button data-target="modalAdd" class="btn-floating blue tooltipped modal-trigger btn" data-position="left" data-tooltip="Tambah Anggota">
+                        <i class="material-icons">person_add</i>
+                    </button>
+                    
+                </li>
                 <!-- <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>-->
                 <li><a class="btn-floating green tooltipped" data-position="left" data-tooltip="Download seluruh data anggota (coming soon)">
                     <i class="material-icons">file_download</i>
@@ -125,115 +108,184 @@ class UserList extends HTMLElement{
             </ul>
         </div>
         <!-- Modal -->
-        <div id="modal1" class="modal modal-fixed-footer">
-            <div class="modal-content">
-                <h4>Tambah Anggota</h4>
-                <form class="login-form" >
+        <div id="modals">
+        </div>
+        <div id="modal-primary">
+            <div id="modalAdd" class="modal black-text">
+                <div class="modal-content">
+                    <h4>Tambah Anggota</h4>
+                    <form class="" id="addMember">
                     <div class="row">
                         <div class="input-field col s12">
-                            <i class="material-icons prefix">card_membership</i>
-                            <input required class="validate" name="nik" id="nik" type="text" pattern="[0-9]{16}">
+                            <i class="prefix fas fa-id-card"></i>
+                            <input aria-required="true" required class="validate" name="nik" id="nik" type="text" pattern="[0-9]{16}">
                             <label for="nik" data-error="wrong" data-success="right">Nomor Induk Kependudukan*</label>
+                            <span class="helper-text">Helper text</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
                             <i class="material-icons prefix">person_outline</i>
-                            <input required class="validate" name="nama" id="nama" type="text">
-                            <label for="nik" data-error="wrong" data-success="right">Nama Lengkap*</label>
+                            <input aria-required="true" required class="validate" name="nama" id="nama" type="text">
+                            <label for="nama" data-error="wrong" data-success="right">Nama Lengkap*</label>
+                            <span class="helper-text">Helper text</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <div class="input-radio-inline">
+                                <i class="fas fa-venus-mars"></i>
+                                <label for="gender-pria">
+                                    <input aria-required="true" value="L" checked class="validate" name="gender" id="gender-pria" type="radio"><span>Pria</span>
+                                </label>
+                                <label for="gender-wanita">
+                                    <input aria-required="true" value="P" class="validate" name="gender" id="gender-wanita" type="radio"><span>Wanita</span>
+                                </label>
+                            </div>
+                            <span class="helper-text">Helper text</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
                             <i class="material-icons prefix">smartphone</i>
-                            <input required class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
+                            <input aria-required="true" required class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
                             <label for="telp" data-error="wrong" data-success="right">No.HP* (0856xxxxx)</label>
+                            <span class="helper-text">Helper text</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
                             <i class="material-icons prefix">lock_outline</i>
-                            <input required id="password" name="password" type="password">
-                            <label for="password">Kata Sandi*</label>
+                            <input aria-required="true" id="password" name="password" type="password">
+                            <label for="password">Kata Sandi</label>
+                            <span class="helper-text">Helper text</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
                             <i class="material-icons prefix">lock_outline</i>
-                            <input required id="passwordConf" name="passwordConf" type="password">
-                            <label for="password">Ulangi Kata Sandi*</label>
+                            <input aria-required="true" id="passwordConf" name="passwordConf" type="password">
+                            <label for="password">Ulangi Kata Sandi</label>
+                            <span class="helper-text">Helper text</span>
                         </div>
                     </div>
                     <div class="row">
                         <div class="input-field col s12" id="_kabupaten">
                             <i class="material-icons prefix">location_on</i>
-                            <select name="domisili_kab" id="domisili_kab" >
+                            <select aria-required="true" aria-required="true" required name="domisili_kab" id="domisili_kab" >
                                 
                             </select>
-                            <label for="domisili_kab">Domisili</label>
+                            <label for="domisili_kab">Pilih Kabupaten Domisili</label>
+                            <span class="helper-text">Helper text</span>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="input-field col s12" id="_kecamatan">
-                            
+                        <div class="row">
+                            <div class="input-field col s12" id="_kecamatan">
+                                
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <a class="modal-close waves-effect waves-green btn-flat">Tutup</a>
-                <a  id="submit" class="modal-close waves-effect waves-green btn-flat">Submit</a>
+                        <div class="progress" id="addMemberLoading">
+                            <div class="indeterminate green darken-3"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-close waves-effect waves-green btn-flat">Tutup</a>
+                    <button type="submit" id="submit" form="addMember" class="waves-effect waves-green btn-flat">Tambahkan</button>
+                </div>
             </div>
         </div>
-        ${user_modal}
         `);
-        $(document).ready(function(){
+        const count = this.dataCount;
+        /**generate table data */
+        this.tableData({
+            page: 1,
+            count: count
+        });
+        /*fungsi untuk pagination */
+        $('.btn-pagination').on('click', (event) => {
+            const page = $(event.currentTarget).data('page');
+            $(`#pageLoading`).show();
+            this.tableData({
+                page: page,
+                count: count
+            });
+        });
+
+        $(() => {
             $('.fixed-action-btn').floatingActionButton({
-                hoverEnabled:false
+                hoverEnabled: false
             });
             $('.tooltipped').tooltip();
-            $('.modal').modal();
-            
+            $('#modalAdd').modal();
+            $('#addMemberLoading').hide();
+            $('.helper-text').hide();
         });
-        $('#submit').click(()=>{
-            M.toast({html: 'Penambahan anggota sukses'});
+
+        /*submit add member */
+        $('form#addMember').on('submit', async(event) => {
+            event.preventDefault();
+            const data = prePost($('form#addMember').serializeArray());
+
+            $('span.helper-text').hide();
+            $('#addMemberLoading').show();
+
+            this.addMember(data).then((data) => {
+
+                $('#addMemberLoading').hide();
+                if (data.status == true) {
+                    $(`#pageLoading`).show();
+                    this.tableData();
+                    $('#modalAdd').modal('close');
+                    M.toast({ html: 'Penambahan anggota sukses' });
+                } else {
+                    for (const key in data.response) {
+                        if (data.response.hasOwnProperty(key)) {
+                            const message = data.response[key];
+                            const msgElement = $(`input#${key}`).siblings('span');
+                            msgElement.text(`${message}`);
+                            msgElement.show();
+                        }
+                    }
+                }
+            }).catch(error => {
+                console.log(error);
+            });
         });
-        //untuk menampilkan kecamatan setiap ganti kabupaten
-        const showKecamatan = (id=3509)=>{
-            kabupaten().then(items=>{
+        /*./add member */
+
+        //menampilkan kecamatan setiap ganti kabupaten
+        const showKecamatan = (id = 3509) => {
+            kabupaten().then(items => {
                 let selections = `
                     <i class="material-icons prefix">location_on</i>
                     <select name="domisili_kec" id="domisili_kec" >
                         <option value="" disabled selected>Pilih Kecamatan</option>
                 `;
-                items.forEach((item)=>{
-                    if(item.id==id){
-                        item.kecamatan.forEach(kecamatan=>{
-                            selections+=`<option value="${kecamatan.id}">${kecamatan.nama}</option>`
+                items.forEach((item) => {
+                    if (item.id == id) {
+                        item.kecamatan.forEach(kecamatan => {
+                            selections += `<option value="${kecamatan.id}">${kecamatan.nama}</option>`
                         })
                     }
                 });
-                selections+=`
+                selections += `
                     </select>
-                    <label for="domisili_Kec">Pilih Kecamatan</label>`;
-
-                //console.log(selections);
+                    <label for="domisili_Kec">Pilih Kecamatan</label>
+                    `;
                 $('div#_kecamatan').html(selections);
-                //$('select').select2({width: "70%"});
                 $('select').formSelect();
             });
         }
-        kabupaten().then(items=>{
+        kabupaten().then(items => {
             let selections = `<option value="" disabled selected>Pilih Kabupaten</option>`;
-            items.forEach((item)=>{
-                selections+=`<option value="${item.id}">${item.nama}</option>`
-                //console.log(item);
+            items.forEach((item) => {
+                selections += `<option value="${item.id}">${item.nama}</option>`
             })
             $('select#domisili_kab').html(selections);
-            //$('select').select2({width: "70%"});
             $('select').formSelect();
-            $('select#domisili_kab').on(`change`,(event)=>{
-                
+            $('select#domisili_kab').on(`change`, (event) => {
+
                 //solving bug that has been discussed here
                 //https://github.com/Dogfalo/materialize/issues/6123
                 const selectedIndex = M.FormSelect.getInstance($('select#domisili_kab')).el.selectedIndex;
@@ -242,5 +294,105 @@ class UserList extends HTMLElement{
             })
         });
     }
+    async tableData(paging = { page: this.currentPage, count: this.dataCount }) {
+        /**get table data */
+
+        const axiosOpt = {
+            method: 'post',
+            url: `${document.baseURI}api/admin/getmember`,
+            data: {
+                page: paging.page,
+                count: paging.count
+            },
+            headers: {
+                'Content-type': 'application/json',
+            }
+        }
+        axios(axiosOpt).then(response => {
+                const data = response.data;
+                const paging = response.data.paging;
+                const page = {
+                    first: 1,
+                    prev: (paging.page < 2 ? 2 : paging.page) - 1,
+                    next: (paging.page >= paging.pages ? paging.pages - 1 : paging.page) + 1,
+                    last: paging.pages,
+                    now: paging.page
+                }
+                this.currentPage = page.now;
+                $(`button#firstPage`).data('page', page.first);
+                $(`button#lastPage`).data('page', page.last);
+
+                $('tbody#user-table-data').empty();
+                $('div#modals').empty();
+                let rowNum = ((page.now - 1) * paging.dataCount);
+                data.response.forEach(async(data, key) => {
+                    const kab = await kabupaten();
+                    kab.forEach(kab => {
+                        if (kab.id == data.domisili_kab) {
+                            data.domisili_kab_id = data.domisili_kab;
+                            data.domisili_kab = kab.nama;
+
+                            kab.kecamatan.forEach(kec => {
+                                if (kec.id == data.domisili_kec) {
+                                    data.domisili_kec_id = data.domisili_kec;
+                                    data.domisili_kec = kec.nama;
+                                }
+                            })
+                        }
+                    });
+                    rowNum++;
+                    const tableRow = /*html */ `
+                    <tr>
+                        <td>${rowNum}</td>
+                        <td>${data.nama||data.username}</td>
+                        <td>${data.nik}</td>
+                        <td>${data.domisili_kab}</td>
+                        <td>
+                            <div class="white-text center">
+                                <button data-target="viewUser${data.id}" class=" modal-trigger btn waves-effect btn-flat waves-light blue btn-small">
+                                <i class="material-icons">visibility</i>
+                                </button> 
+                                <button data-target="editUser${data.id}" class="modal-trigger btn waves-effect btn-flat waves-light green btn-small">
+                                    <i class="material-icons">edit</i>
+                                </button>
+                                <button data-target="delUser${data.id}" class="modal-trigger btn modal-trigger waves-effect btn-flat waves-light red btn-small">
+                                    <i class="material-icons">delete</i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
+                    const modalUser = $( /*html*/ `<modal-member></modal-member>`)[0];
+                    modalUser.data = data;
+                    $('tbody#user-table-data').append(tableRow);
+                    $('div#modals').append(modalUser);
+                    $(`.modal`).modal();
+
+                });
+                $(`button#prevPage`).data('page', page.prev);
+                $(`button#nextPage`).data('page', page.next);
+                $(`#pageLoading`).hide();
+            })
+            .catch(error => {
+                console.log(error);
+            })
+
+    }
+    async addMember(data = null) {
+        try {
+            const axiosOpt = {
+                method: 'post',
+                url: `${document.baseURI}api/admin/addmember`,
+                data: data,
+                headers: {
+                    'Content-type': 'application/json',
+                }
+            }
+            const result = await axios(axiosOpt);
+
+            return result.data;
+        } catch (error) {
+            return error;
+        }
+    }
 }
-customElements.define('user-list',UserList);
+customElements.define('user-list', UserList);
