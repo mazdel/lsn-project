@@ -25,16 +25,66 @@ class FormDataMember extends HTMLElement {
         return ['src', 'id', 'name', 'class'];
     }
 
-    set form(form = { type: "add", data, id: this.formId }) {
+    set form(
+        form = {
+            type: "add",
+            data,
+            id: this.formId,
+            withPassword: false,
+            customHeader: null,
+            kta_field: 'disabled',
+            nik_field: 'disabled',
+            class: null
+        }) {
         this._form = form;
     }
     render() {
         const form = this._form;
-        let data = { nik: "", nama: "", telp: "" },
-            passwordField = ``;
+        let data = {},
+            passwordField = ``,
+            kta_field = "";
+        if (form.kta_field) {
+            let ktaDisabled;
+            if (form.kta_field == 'disabled') {
+                ktaDisabled = 'disabled';
+            }
+            kta_field = /*html */ `
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="prefix fas fa-id-card"></i>
+                    <input ${ktaDisabled||""} class="validate" name="no_kta" id="no_kta-${form.id}" type="text" value="${form.data.no_kta|| (form.data.domisili_kec_id || "") + form.data.id}">
+                    
+                    <label for="no_kta-${form.id}">Nomor Kartu Anggota</label>
+                    <span class="helper-text">Helper text</span>
+                </div>
+            </div>
+        `;
+        }
         if (form.type == "edit") {
             data = form.data;
-            passwordField = /*html*/ `
+
+            if (form.withPassword) {
+                passwordField = /*html */ `
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">lock_outline</i>
+                            <input placeholder="[abaikan jika tidak ingin mengubah kata sandi]" aria-required="true" id="password-${form.id}" name="password" type="password">
+                            <label for="password-${form.id}">Kata Sandi</label>
+                            <span class="helper-text">Helper text</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">lock_outline</i>
+                            <input placeholder="[abaikan jika tidak ingin mengubah kata sandi]" aria-required="true" id="passwordConf-${form.id}" name="passwordConf" type="password">
+                            <label for="password-${form.id}">Ulangi Kata Sandi</label>
+                            <span class="helper-text">Helper text</span>
+                        </div>
+                    </div>
+                `;
+
+            } else {
+                passwordField = /*html*/ `
                 <div class="row">
                     <div class="input-field col s12">
                         <div class="input-radio-inline">
@@ -43,12 +93,13 @@ class FormDataMember extends HTMLElement {
                                 <input aria-required="true" value="Y" class="validate" name="resetpass" id="reset-pass-yes-${form.id}" type="radio"><span>Ya, reset password</span>
                             </label>
                             <label for="reset-pass-no-${form.id}">
-                                <input aria-required="true" value="N" checked class="validate" name="resetpass" id="reset-pass-no-${form.id}" type="radio"><span>Tidak, biarkan Saja</span>
+                                <input aria-required="true" value="N" checked class="validate" name="resetpass" id="reset-pass-no-${form.id}" type="radio"><span>Tidak, biarkan saja</span>
                             </label>
                         </div>
                     </div>
                 </div>
             `;
+            }
         } else {
             passwordField = /*html */ `
                 <div class="row">
@@ -69,12 +120,15 @@ class FormDataMember extends HTMLElement {
                 </div>
             `;
         }
-        $(this).html( /*html */ `
-            <form class="" id="${form.id}">
+        this.innerHTML = /*html */ `
+            <form class="${form.class||""}" id="${form.id}">
+                
+                ${form.customHeader||""}
+                ${kta_field}
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="prefix fas fa-id-card"></i>
-                        <input aria-required="true" required class="validate" name="nik" id="nik-${form.id}" type="text" pattern="[0-9]{16}" value="${data.nik||""}">
+                        <input aria-required="true" required class="validate" ${form.nik_field||""} name="nik" id="nik-${form.id}" type="text" pattern="[0-9]{16}" value="${data.nik||""}">
                         <label for="nik-${form.id}" data-error="wrong" data-success="right">Nomor Induk Kependudukan*</label>
                         <span class="helper-text">Helper text</span>
                     </div>
@@ -84,6 +138,14 @@ class FormDataMember extends HTMLElement {
                         <i class="material-icons prefix">person_outline</i>
                         <input value="${data.nama||""}" aria-required="true" required class="validate" name="nama" id="nama-${form.id}" type="text">
                         <label for="nama-${form.id}" data-error="wrong" data-success="right">Nama Lengkap*</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="fas fa-birthday-cake prefix"></i>
+                        <input placeholder="Jakarta, 17-08-1945" value="${data.tempat_tgl_lahir||""}" aria-required="true" required class="validate" name="tempat_tgl_lahir" id="tempat_tgl_lahir-${form.id}" type="text">
+                        <label for="tempat_tgl_lahir-${form.id}">Tempat, Tanggal Lahir*</label>
                         <span class="helper-text">Helper text</span>
                     </div>
                 </div>
@@ -104,12 +166,20 @@ class FormDataMember extends HTMLElement {
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">smartphone</i>
-                        <input value="${data.telp||""}" aria-required="true" required class="validate" name="telp" id="telp-${form.id}" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
-                        <label for="telp-${form.id}" data-error="wrong" data-success="right">No.HP* (0856xxxxx)</label>
+                        <input placeholder="081234567890" value="${data.telp||""}" aria-required="true" required class="validate" name="telp" id="telp-${form.id}" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
+                        <label for="telp-${form.id}" data-error="wrong" data-success="right">No.HP*</label>
                         <span class="helper-text">Helper text</span>
                     </div>
                 </div>
                 ${passwordField}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">location_on</i>
+                        <textarea placeholder="Jl. Kenangan, No.26" class="materialize-textarea" name="alamat" id="alamat-${form.id}" type="text">${data.alamat||""}</textarea>
+                        <label for="alamat-${form.id}">Alamat</label>
+                        <span class="helper-text">Helper text</span>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="input-field col s12" id="_kabupaten-${form.id}">
                         <i class="material-icons prefix">location_on</i>
@@ -129,14 +199,14 @@ class FormDataMember extends HTMLElement {
                         <div class="indeterminate green darken-3"></div>
                     </div>
                 </form>
-        `);
+        `;
 
         $(`#addMemberLoading-${form.id}`).hide();
         $('.helper-text').hide();
         M.updateTextFields();
         //menampilkan kecamatan setiap ganti kabupaten
         //buggy here
-        console.log()
+
         const showKecamatan = (id = 3509) => {
             kabupaten().then(items => {
                 let selections = `

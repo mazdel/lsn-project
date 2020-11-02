@@ -1,6 +1,7 @@
 import site from '../../data/site-data';
 import './sign-in';
 import './sign-up';
+import axios from 'axios';
 
 class SignPage extends HTMLElement {
     constructor() {
@@ -48,11 +49,33 @@ class SignPage extends HTMLElement {
         $(this).html(inPage);
 
         $('.spage-action').each((key, elm) => {
-            $(elm).on('click', () => {
+            $(elm).on('click', (event) => {
+                event.stopPropagation();
                 const pageToGo = $(elm).attr('href').substr($(elm).attr('href').indexOf('#') + 1);
                 this.page = pageToGo;
             });
         });
+
+    }
+    async getsess() {
+        /**get session data */
+        const axiosOpt = {
+            method: 'post',
+            url: `${document.baseURI}api/getsession`,
+            data: null,
+            headers: {
+                'Content-type': 'application/json',
+            }
+        }
+        axios(axiosOpt).then(response => {
+                const data = response.data.signedin;
+                console.log('getsess', response);
+
+            })
+            .catch(error => {
+                console.log(error);
+            })
+            /**./get session data */
     }
 }
 customElements.define('sign-page', SignPage);

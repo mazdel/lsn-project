@@ -1,6 +1,8 @@
 import site from '../../data/site-data';
 import './dashboard-content/dash-board';
 import './dashboard-content/user-list';
+import './dashboard-content/profil-setting';
+import './dashboard-content/kartu-tanda-anggota';
 
 
 class MainContent extends HTMLElement {
@@ -33,21 +35,46 @@ class MainContent extends HTMLElement {
     }
     render() {
         let page;
-        switch (this._page) {
-            case 'dashboard':
-                page = `<dash-board></dash-board>`;
-                break;
-            case 'userlist':
-                page = `<user-list></user-list>`;
+        this.level = sessionStorage.getItem('level');
+        switch (this.level) {
+            case 'admin':
+                switch (this._page) {
+                    case 'dashboard':
+                        page = `dash-board`;
+                        break;
+                    case 'userlist':
+                        page = `user-list`;
+                        break;
+                    case 'profil':
+                        page = `profil-setting`;
+                        break;
+                    case 'kta':
+                        page = `kartu-tanda-anggota`;
+                        break;
+                    default:
+                        page = `dash-board`;
+                        break;
+                }
                 break;
             default:
-                page = `<dash-board></dash-board>`;
+                switch (this._page) {
+                    case 'profil':
+                        page = `profil-setting`;
+                        break;
+                    case 'kta':
+                        page = `kartu-tanda-anggota`;
+                        break;
+                    default:
+                        page = `kartu-tanda-anggota`;
+                        break;
+                }
                 break;
         }
-        const inPage = $(`${page}`)[0];
+
+        const inPage = document.createElement(page);
         inPage.site = site;
 
-        $(this).html(inPage);
+        this.innerHTML = inPage.outerHTML;
 
     }
 }

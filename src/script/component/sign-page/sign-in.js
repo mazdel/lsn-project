@@ -106,6 +106,7 @@ class SignIn extends HTMLElement {
         })
         $('form#signin').on('submit', (event) => {
             event.preventDefault();
+            event.stopPropagation();
             const btn_signin = event.originalEvent.submitter;
             const data = prePost($('form#signin').serializeArray());
             $(`input`).siblings('span').hide();
@@ -134,7 +135,9 @@ class SignIn extends HTMLElement {
                             const msgElement = $(`input#${key}`).siblings('span');
                             msgElement.text(`${message}`);
                             msgElement.show();
-
+                            if (message) {
+                                M.toast({ html: `${message}` });
+                            }
                         }
                     }
                 }

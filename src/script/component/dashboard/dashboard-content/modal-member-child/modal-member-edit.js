@@ -30,22 +30,22 @@ class ModalMemberEdit extends HTMLElement {
     }
     render() {
         const data = this._data;
-        const form = $(`<form-data-member></form-data-member>`)[0];
+        const form = document.createElement(`form-data-member`); //$(`<form-data-member></form-data-member>`)[0];
         form.form = {
             type: 'edit',
             data: data,
-            id: `formEdit${data.id}`
+            id: `formEdit${data.id}`,
+            kta_field: 'disabled'
         }
-        $(this).html( /* html */ `
-            <div id="editUser${data.id}" class="modal modal-fixed-footer">
+        this.innerHTML = /* html */ `
+            <div id="editUser${data.id}" class="modal modal-fixed-footer modal-l">
                 <div class="modal-content">
                     <div class="container">
-                        <h4 class="">Edit data anggota "${data.nama||data.username}"</h4>
+                        <h4 class="">Ubah data anggota "${data.nama||data.username}"</h4>
                         <hr>
                         <div class="row modal-member-view">
                             <div class="col s12 m12 l12">
-                                <div class="container">
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -55,10 +55,11 @@ class ModalMemberEdit extends HTMLElement {
                     <button type="submit" id="submit${data.id}" form="formEdit${data.id}" class="waves-effect waves-green btn-flat">Simpan</button>
                 </div>
             </div>
-        `);
-        $(`#editUser${data.id}>div.modal-content>div.container div.container`).append(form);
+        `;
+        document.querySelector(`#editUser${data.id}>div.modal-content>div.container>div.row div.col`).appendChild(form);
+        //$(`#editUser${data.id}>div.modal-content>div.container>div.row div.col`).append(form);
         //simpan data
-        const userList = $(`<user-list></user-list>`)[0];
+
 
         $(`form#formEdit${data.id}`).on('submit', async(event) => {
             event.stopPropagation();
@@ -72,7 +73,8 @@ class ModalMemberEdit extends HTMLElement {
                 $(`#addMemberLoading-formEdit${data.id}`).hide();
                 if (result.status == true) {
                     $(`#pageLoading`).show();
-                    userList.tableData();
+                    document.querySelector(`user-list`).tableData();
+
                     $(`#editUser${data.id}`).modal('close');
                     M.toast({ html: `Perubahan data anggota ${data.nama||data.username||data.nik} sukses` });
                 } else {
@@ -82,6 +84,9 @@ class ModalMemberEdit extends HTMLElement {
                             const msgElement = $(`input#${key}-${form.id}`).siblings('span');
                             msgElement.text(`${message}`);
                             msgElement.show();
+                            if (message) {
+                                M.toast({ html: `${message}` });
+                            }
                         }
                     }
                 }
@@ -92,9 +97,10 @@ class ModalMemberEdit extends HTMLElement {
     }
     async editMember(id = null, data = null) {
         try {
+            const level = sessionStorage.getItem('level');
             const axiosOpt = {
                 method: 'post',
-                url: `${document.baseURI}api/admin/editmember/${id}`,
+                url: `${document.baseURI}api/${level}/editmember/${id}`,
                 data: data,
                 headers: {
                     'Content-type': 'application/json',

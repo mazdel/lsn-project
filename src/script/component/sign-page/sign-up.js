@@ -65,7 +65,15 @@ class SignUp extends HTMLElement {
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">person_outline</i>
                                     <input aria-required="true" required class="validate" name="nama" id="nama" type="text">
-                                    <label for="nik" data-error="wrong" data-success="right">Nama Lengkap*</label>
+                                    <label for="nama" data-error="wrong" data-success="right">Nama Lengkap*</label>
+                                    <span class="helper-text">Helper text</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="fas fa-birthday-cake prefix"></i>
+                                    <input placeholder="Jakarta, 17-08-1945" aria-required="true" required class="validate" name="tempat_tgl_lahir" id="tempat_tgl_lahir" type="text">
+                                    <label for="tempat_tgl_lahir">Tempat, Tanggal Lahir*</label>
                                     <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
@@ -86,8 +94,8 @@ class SignUp extends HTMLElement {
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="material-icons prefix">smartphone</i>
-                                    <input aria-required="true" required class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
-                                    <label for="telp" data-error="wrong" data-success="right">No.HP* (0856xxxxx)</label>
+                                    <input aria-required="true" required placeholder="081234567890" class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
+                                    <label for="telp" data-error="wrong" data-success="right">No.HP*</label>
                                     <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
@@ -104,6 +112,14 @@ class SignUp extends HTMLElement {
                                     <i class="material-icons prefix">lock_outline</i>
                                     <input aria-required="true" required id="passwordConf" name="passwordConf" type="password">
                                     <label for="password">Ulangi Kata Sandi*</label>
+                                    <span class="helper-text">Helper text</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">location_on</i>
+                                    <textarea placeholder="Jl. Kenangan, No.26" aria-required="true" required class="materialize-textarea" name="alamat" id="alamat" type="text"></textarea>
+                                    <label for="alamat">Alamat*</label>
                                     <span class="helper-text">Helper text</span>
                                 </div>
                             </div>
@@ -142,6 +158,7 @@ class SignUp extends HTMLElement {
         </div>
         
         `);
+        M.updateTextFields();
         //untuk menampilkan kecamatan setiap ganti kabupaten
         const showKecamatan = (id = 3509) => {
             kabupaten().then(items => {
@@ -179,6 +196,7 @@ class SignUp extends HTMLElement {
 
             $('select').formSelect();
             $('select#domisili_kab').on(`change`, (event) => {
+                event.stopPropagation();
                 //solving bug that has been discussed here
                 //https://github.com/Dogfalo/materialize/issues/6123
                 const selectedIndex = M.FormSelect.getInstance($('select#domisili_kab')).el.selectedIndex;
@@ -194,6 +212,7 @@ class SignUp extends HTMLElement {
         })
         $('form#signup').on('submit', (event) => {
             event.preventDefault();
+            event.stopPropagation();
             const btn_signup = event.originalEvent.submitter;
             const data = prePost($('form#signup').serializeArray());
             $('span.helper-text').hide();
@@ -204,7 +223,7 @@ class SignUp extends HTMLElement {
             //begin submit
             const axiosOpt = {
                     method: 'post',
-                    url: `${document.baseURI}api/signup`,
+                    url: `${location.origin}${location.pathname}api/signup`,
                     data: data,
                     headers: {
                         'Content-type': 'application/json',
@@ -222,12 +241,12 @@ class SignUp extends HTMLElement {
                             if (data.response.hasOwnProperty(key)) {
                                 const message = data.response[key];
                                 const msgElement = $(`
-                                input# $ { key }
-                                `).siblings('span');
-                                msgElement.text(`
-                                $ { message }
-                                `);
+                                input#${key}`).siblings('span');
+                                msgElement.text(`${message}`);
                                 msgElement.show();
+                                if (message) {
+                                    M.toast({ html: `${message}` });
+                                }
                             }
                         }
                     }
@@ -236,6 +255,7 @@ class SignUp extends HTMLElement {
                 .catch((error) => {
                     console.log(error.response);
                     console.log(error.data);
+                    console.log(error);
                     $('#loading').hide();
                 })
         })

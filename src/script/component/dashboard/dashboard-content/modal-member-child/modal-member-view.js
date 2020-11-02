@@ -30,8 +30,8 @@ class ModalMemberView extends HTMLElement {
         const data = this._data;
         const defaultAvatar = (data.gender == 'L') ? 'src/img/avatars/avatar1.png' : 'src/img/avatars/avatar2.png'
         const fotoProfil = data.foto_profil || defaultAvatar;
-        $(this).html( /* html */ `
-            <div id="viewUser${data.id}" class="modal modal-fixed-footer">
+        this.innerHTML = ( /* html */ `
+            <div id="viewUser${data.id}" class="modal modal-fixed-footer modal-l">
                 <div class="modal-content">
                     <div class="container">
                         <h4 class="text-darken-3">Lihat detail anggota "${data.nama||data.username}"</h4>

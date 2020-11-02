@@ -12,7 +12,7 @@ class SideNav extends HTMLElement {
         this.id = $(this).attr("id") || "side-nav";
         this.class = $(this).attr("class") || "";
         $(this).attr("class", this.class);
-        this.render();
+        this.getsession();
     }
     disconnectedCallback() {
 
@@ -26,13 +26,39 @@ class SideNav extends HTMLElement {
     static get observedAttributes() {
         return ['src', 'id', 'name', 'class'];
     }
+    async getsession() {
+        /**get session data */
+        const axiosOpt = {
+            method: 'post',
+            url: `${document.baseURI}api/getsession`,
+            data: null,
+            headers: {
+                'Content-type': 'application/json',
+            }
+        }
+        axios(axiosOpt).then(response => {
+                const data = response.data.signedin;
+                const defaultAvatar = (data.gender == "L") ? "src/img/avatars/avatar1.png" : "src/img/avatars/avatar2.png";
+                data.foto_profil = data.foto_profil || defaultAvatar;
+                data.nama = data.nama || data.username || data.nik;
 
-    render() {
+                Object.entries(data).forEach((data) => {
+                    sessionStorage.setItem(data[0], data[1]);
+                });
+
+                this.render(data);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+            /**./get session data */
+    }
+    render(data = { level: 'anggota' }) {
         //console.log(site);
         let sidemenu = '',
             _group;
-
-        site.dummy.sidenav.admin.forEach(menu => {
+        const sidemenuData = site.dummy.sidenav[data.level];
+        sidemenuData.forEach(menu => {
             let icon = IconHelper.icon(menu.icon, menu.icon_type);
 
             //shorthand untuk mengisi variabel _group apabila masih kosong
@@ -55,9 +81,9 @@ class SideNav extends HTMLElement {
                     <div class="background">
                     <img src="src/img/lsn-banner.jpg">
                     </div>
-                    <img id="fotoProfil" class="circle" src="src/img/avatars/avatar1.png">
-                    <span id="nama" class="white-text name">Nama</span>
-                    <span id="phone" class="white-text email">+628xxxx</span>
+                    <img id="fotoProfil" class="circle" src="${data.foto_profil}">
+                    <span id="nama" class="white-text name">${data.nama}</span>
+                    <span id="phone" class="white-text email">${data.telp}</span>
                 </div>
             </li>
             ${sidemenu}
@@ -65,49 +91,32 @@ class SideNav extends HTMLElement {
             
         `);
         $('.nav-action').each((key, elm) => {
-            $(elm).on('click', () => {
+            $(elm).on('click', (event) => {
+                event.stopPropagation();
                 const pageToGo = $(elm).attr('href').substr($(elm).attr('href').indexOf('#') + 1);
-
-                Chart.helpers.each(Chart.instances, function(instance) {
-                        instance.destroy();
+                if (pageToGo == 'signout') {
+                    this.signout().then(data => {
+                        if (data.status) {
+                            sessionStorage.clear();
+                            window.location.replace(`${document.baseURI}${data.response.redirect}`);
+                        }
                     })
-                    //console.log($('.chart'));
-                const mainContent = document.querySelector("main-content"); //$(`<main-content></main-content>`)[0];
-                mainContent.page = pageToGo;
-                if ($(window).innerWidth() <= 992) {
-                    $('.sidenav').sidenav('close');
+                } else {
+                    Chart.helpers.each(Chart.instances, function(instance) {
+                            instance.destroy();
+                        })
+                        //console.log($('.chart'));
+                    const mainContent = document.querySelector("main-content");
+                    mainContent.page = pageToGo;
+                    if ($(window).innerWidth() <= 992) {
+                        $('.sidenav').sidenav('close');
+                    }
                 }
-                //console.log(`should have to go to `,mainContent);
-
             });
         });
 
         $(() => {
-            /**get session data */
-            const axiosOpt = {
-                method: 'post',
-                url: `${document.baseURI}api/getsession`,
-                data: null,
-                headers: {
-                    'Content-type': 'application/json',
-                }
-            }
-            axios(axiosOpt).then(response => {
-                    const data = response.data.signedin;
 
-                    const fotoProfil = data.foto_profil;
-                    const nama = data.nama || data.username || data.nik;
-                    const phone = data.telp;
-                    if (fotoProfil != null) {
-                        $('#fotoProfil').attr('src', `${fotoProfil}`);
-                    }
-                    $('#nama').text(`${nama}`);
-                    $('#phone').text(`${phone}`);
-                })
-                .catch(error => {
-                    console.log(error);
-                })
-                /**./get session data */
             $('.sidenav').sidenav({ inDuration: 500, outDuration: 500 });
             $('header').addClass('sideEffect');
             $('main').addClass('sideEffect');
@@ -115,7 +124,8 @@ class SideNav extends HTMLElement {
             $('a#sidenav-burger-mobile').attr('data-target', 'slide-out');
             sidenavWidescreen();
         });
-        $(window).resize(() => {
+        $(window).on(`resize`, (event) => {
+            event.stopPropagation();
             sidenavWidescreen();
         })
 
@@ -136,7 +146,8 @@ class SideNav extends HTMLElement {
         }
 
         ///fungsi side-menu untuk layar lebar (>992px)
-        $('a#sidenav-burger-wide').on('click', () => {
+        $('a#sidenav-burger-wide').on('click', (event) => {
+            event.stopPropagation();
             const sidenav = M.Sidenav.getInstance($('.sidenav#slide-out'));
             //console.log(sidenav.isFixed);
             if (sidenav.isOpen) {
@@ -165,5 +176,25 @@ class SideNav extends HTMLElement {
 
 
     }
+    async signout() {
+        const axiosOpt = {
+            method: 'post',
+            url: `${document.baseURI}api/signout`,
+            data: null,
+            headers: {
+                'Content-type': 'application/json',
+            }
+        }
+        try {
+            const response = await axios(axiosOpt);
+            console.log(response);
+            return response.data;
+
+        } catch (error) {
+            console.log(error.response);
+        }
+
+    }
+
 }
 customElements.define('side-nav', SideNav);

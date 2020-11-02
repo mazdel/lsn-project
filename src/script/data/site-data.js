@@ -1,3 +1,4 @@
+const basepath = `${location.origin}${location.pathname}`;
 const site = {
     name: 'SISMANA Laskar Sholawat Nusantara',
     shortName: 'SISMANA LSN',
@@ -8,7 +9,7 @@ const site = {
             admin: [{
                     id: 1,
                     name: 'Dashboard',
-                    href: `${location.origin}${location.pathname}` + '#dashboard',
+                    href: `${basepath}` + '#dashboard',
                     icon: 'dashboard',
                     icon_type: 'material',
                     group: '1',
@@ -16,8 +17,8 @@ const site = {
                 },
                 {
                     id: 2,
-                    name: 'Userlist',
-                    href: `${location.origin}${location.pathname}` + '#userlist',
+                    name: 'Daftar Anggota',
+                    href: `${basepath}` + '#userlist',
                     icon: 'people',
                     icon_type: 'material',
                     group: '1',
@@ -25,23 +26,60 @@ const site = {
                 },
                 {
                     id: 3,
-                    name: 'Pengaturan',
-                    href: `${location.origin}${location.pathname}` + '#',
-                    icon: 'settings',
+                    name: 'Pengaturan Profil',
+                    href: `${basepath}` + '#profil',
+                    icon: 'person',
                     icon_type: 'material',
                     group: '2',
                     parent: ''
                 },
                 {
                     id: 4,
+                    name: 'Kartu Anggota',
+                    href: `${basepath}` + '#kta',
+                    icon: 'contacts',
+                    icon_type: 'material',
+                    group: '2',
+                    parent: ''
+                },
+                {
+                    id: 5,
                     name: 'Sign Out',
-                    href: 'index.html',
+                    href: `${basepath}` + '#signout',
+                    icon: 'fa fa-sign-out-alt',
+                    icon_type: 'fontawesome',
+                    group: '3',
+                    parent: ''
+                }
+            ],
+            anggota: [{
+                    id: 1,
+                    name: 'Profil Saya',
+                    href: `${basepath}` + '#profil',
+                    icon: 'person',
+                    icon_type: 'material',
+                    group: '1',
+                    parent: ''
+                },
+                {
+                    id: 2,
+                    name: 'Kartu Anggota',
+                    href: `${basepath}` + '#kta',
+                    icon: 'contacts',
+                    icon_type: 'material',
+                    group: '1',
+                    parent: ''
+                },
+                {
+                    id: 3,
+                    name: 'Sign Out',
+                    href: `${basepath}` + '#signout',
                     icon: 'fa fa-sign-out-alt',
                     icon_type: 'fontawesome',
                     group: '2',
                     parent: ''
                 }
-            ],
+            ]
         },
         user: [{
                 id: 1,

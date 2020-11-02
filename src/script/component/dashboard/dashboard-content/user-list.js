@@ -10,13 +10,16 @@ import './modal-member';
 class UserList extends HTMLElement {
     constructor() {
         super();
+
     }
     connectedCallback() {
         this.id = $(this).attr("id") || "user-list";
         this.class = $(this).attr("class") || "";
         $(this).attr("class", this.class);
-        this.dataCount = 5;
+        this.dataCount = 50;
         this.currentPage = 1;
+        $(this).empty();
+
         this.render();
     }
     disconnectedCallback() {
@@ -37,7 +40,7 @@ class UserList extends HTMLElement {
     }
 
     render() {
-        $(this).html( /*html*/ `
+        this.innerHTML = ( /*html*/ `
         <div class="green lighten-5">
             <div class="row d block">
                 <div class="col s12 m12 l12">
@@ -133,6 +136,14 @@ class UserList extends HTMLElement {
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
+                            <i class="fas fa-birthday-cake prefix"></i>
+                            <input placeholder="Jakarta, 17-08-1945" aria-required="true" required class="validate" name="tempat_tgl_lahir" id="tempat_tgl_lahir" type="text">
+                            <label for="tempat_tgl_lahir">Tempat, Tanggal Lahir*</label>
+                            <span class="helper-text">Helper text</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
                             <div class="input-radio-inline">
                                 <i class="fas fa-venus-mars"></i>
                                 <label for="gender-pria">
@@ -204,6 +215,7 @@ class UserList extends HTMLElement {
         });
         /*fungsi untuk pagination */
         $('.btn-pagination').on('click', (event) => {
+            event.stopPropagation();
             const page = $(event.currentTarget).data('page');
             $(`#pageLoading`).show();
             this.tableData({
@@ -225,13 +237,13 @@ class UserList extends HTMLElement {
         /*submit add member */
         $('form#addMember').on('submit', async(event) => {
             event.preventDefault();
+            event.stopPropagation();
             const data = prePost($('form#addMember').serializeArray());
 
             $('span.helper-text').hide();
             $('#addMemberLoading').show();
 
             this.addMember(data).then((data) => {
-
                 $('#addMemberLoading').hide();
                 if (data.status == true) {
                     $(`#pageLoading`).show();
@@ -239,12 +251,16 @@ class UserList extends HTMLElement {
                     $('#modalAdd').modal('close');
                     M.toast({ html: 'Penambahan anggota sukses' });
                 } else {
+                    console.log(data);
                     for (const key in data.response) {
                         if (data.response.hasOwnProperty(key)) {
                             const message = data.response[key];
                             const msgElement = $(`input#${key}`).siblings('span');
                             msgElement.text(`${message}`);
                             msgElement.show();
+                            if (message) {
+                                M.toast({ html: `${message}` });
+                            }
                         }
                     }
                 }
@@ -285,7 +301,7 @@ class UserList extends HTMLElement {
             $('select#domisili_kab').html(selections);
             $('select').formSelect();
             $('select#domisili_kab').on(`change`, (event) => {
-
+                event.stopPropagation();
                 //solving bug that has been discussed here
                 //https://github.com/Dogfalo/materialize/issues/6123
                 const selectedIndex = M.FormSelect.getInstance($('select#domisili_kab')).el.selectedIndex;
@@ -296,10 +312,10 @@ class UserList extends HTMLElement {
     }
     async tableData(paging = { page: this.currentPage, count: this.dataCount }) {
         /**get table data */
-
+        const level = sessionStorage.getItem('level');
         const axiosOpt = {
             method: 'post',
-            url: `${document.baseURI}api/admin/getmember`,
+            url: `${document.baseURI}api/${level}/getmember`,
             data: {
                 page: paging.page,
                 count: paging.count
@@ -319,8 +335,22 @@ class UserList extends HTMLElement {
                     now: paging.page
                 }
                 this.currentPage = page.now;
-                $(`button#firstPage`).data('page', page.first);
-                $(`button#lastPage`).data('page', page.last);
+                if (this.currentPage == page.first) {
+
+                    $(`button#prevPage`).addClass('disabled');
+                    $(`button#firstPage`).addClass('disabled');
+                }
+                if (this.currentPage == page.last) {
+
+                    $(`button#nextPage`).addClass('disabled');
+                    $(`button#lastPage`).addClass('disabled');
+                }
+                if (this.currentPage != page.last || this.currentPage != page.first) {
+                    $(`button#prevPage`).removeClass('disabled');
+                    $(`button#firstPage`).removeClass('disabled');
+                    $(`button#nextPage`).removeClass('disabled');
+                    $(`button#lastPage`).removeClass('disabled');
+                }
 
                 $('tbody#user-table-data').empty();
                 $('div#modals').empty();
@@ -340,6 +370,7 @@ class UserList extends HTMLElement {
                             })
                         }
                     });
+                    data.no_kta = data.no_kta || data.domisili_kec_id + data.id;
                     rowNum++;
                     const tableRow = /*html */ `
                     <tr>
@@ -379,9 +410,10 @@ class UserList extends HTMLElement {
     }
     async addMember(data = null) {
         try {
+            const level = sessionStorage.getItem('level');
             const axiosOpt = {
                 method: 'post',
-                url: `${document.baseURI}api/admin/addmember`,
+                url: `${document.baseURI}api/${level}/addmember`,
                 data: data,
                 headers: {
                     'Content-type': 'application/json',

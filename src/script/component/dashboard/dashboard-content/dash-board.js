@@ -1,66 +1,107 @@
 import Chart from 'chart.js';
 import customColor from '../../../helper/color-helper';
 import moment from 'moment';
+import axios from 'axios';
+import kabupaten from '../../../data/kabupaten';
 
-class DashBoard extends HTMLElement{
-    constructor(){
+class DashBoard extends HTMLElement {
+    constructor() {
         super();
     }
-    connectedCallback(){
-        this.id = $(this).attr("id")||"dash-board";
-        this.class = $(this).attr("class")||"";
-        $(this).attr("class",this.class);
-        
-        this.render();
+    connectedCallback() {
+        this.id = $(this).attr("id") || "dash-board";
+        this.class = $(this).attr("class") || "";
+        $(this).attr("class", this.class);
+
+        this.dataDashboard();
     }
-    disconnectedCallback(){
-        
-    }
-    adoptedCallback(){
+    disconnectedCallback() {
 
     }
-    attributeChangedCallback(name,oldValue,newValue){
+    adoptedCallback() {
 
     }
-    static get observedAttributes(){
-        return ['src','id','name','class'];
+    attributeChangedCallback(name, oldValue, newValue) {
+
     }
-    set site(data){
-        this._site=data;
+    static get observedAttributes() {
+        return ['src', 'id', 'name', 'class'];
+    }
+    set site(data) {
+        this._site = data;
         //this.render();
     }
-    render(){
-        $(this).html(/*html*/`
+    dataDashboard() {
+        const axiosOpt = {
+            method: 'get',
+            url: `${document.baseURI}api/getdashboard`,
+            data: null,
+            headers: {
+                'Content-type': 'application/json',
+            }
+        }
+        axios(axiosOpt).then(async response => {
+            const data = response.data.response;
+            //console.log('data', data);
+            const kab = await kabupaten();
+            let kabupatenAll = [];
+            kab.forEach(kab => {
+                data.domisili_kab.forEach((kab2, key) => {
+                    if (kab.id == kab2.domisili_kab) {
+                        kabupatenAll[key] = {
+                            id: kab2.domisili_kab,
+                            nama: kab.nama,
+                            amount: kab2.amount
+                        }
+
+                    }
+                });
+
+            });
+            data.domisili_kab = kabupatenAll;
+
+            this.render(data);
+        })
+
+        /**./get session data */
+    }
+    render(data) {
+        //console.log(data);
+        let dougnutChart = {
+            labels: [],
+            data: [],
+            totalMember: 0
+        };
+        let lineChart = {
+            labels: [],
+            data: [],
+            totalMember: 0
+        }
+        data.domisili_kab.forEach(value => {
+            dougnutChart.labels.push(value.nama);
+            dougnutChart.data.push(parseInt(value.amount));
+            dougnutChart.totalMember = dougnutChart.totalMember + parseInt(value.amount);
+        });
+        data.tgl_gabung.forEach(value => {
+            lineChart.labels.push(moment(value.tgl_join).format('DD/MM/YY'));
+            lineChart.data.push(parseInt(value.amount));
+            lineChart.totalMember = lineChart.totalMember + parseInt(value.amount);
+        })
+        $(this).html( /*html*/ `
         <div class="green lighten-5">
             <div class="row d block">
                 <div class="col s12 m6">
-                    <div class="card">
-                        <div class="card-content black-text">
-                            <span class="card-title">Anggota Lumajang</span>
-                            <h3 id='totLum'>5</h3> Pendaftar baru hari ini
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="card">
-                        <div class="card-content black-text">
-                            <span class="card-title">Anggota Jember</span>
-                            <h3 id="totJem">10</h3> Pendaftar baru hari ini
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="card">
+                    <div class="card medium">
                         <div class="card-content white black-text">
                             <span class="card-title">Anggota LSN</span>
                             <canvas id="chart1" class="chart"></canvas>
-                            <h5 id='totMem'>180</h5>
+                            <h5 id='totMem'>${dougnutChart.totalMember}</h5>
                             <p>Total anggota saat ini</p>
                         </div>
                     </div>
                 </div>
                 <div class="col s12 m6">
-                    <div class="card">
+                    <div class="card medium">
                         <div class="card-content white black-text">
                             <span class="card-title">Pertumbuhan Anggota</span>
                             <canvas id="chart2" class="chart" ></canvas>
@@ -70,21 +111,19 @@ class DashBoard extends HTMLElement{
             </div>
         </div>
         `);
-        /** data dummy */
+        /** data dummy
         const jember = Math.floor(Math.random() * 100);
         const lumajang = Math.floor(Math.random() * 100);
         $('#totJem').text(jember);
         $('#totLum').text(lumajang);
-        $('#totMem').text(jember+lumajang);
-        const chart1 = new Chart($('#chart1'),{
+        $('#totMem').text(jember + lumajang);
+        */
+        const chart1 = new Chart($('#chart1'), {
             type: 'doughnut',
             data: {
-                labels: ['Lumajang', 'Jember'],
+                labels: dougnutChart.labels,
                 datasets: [{
-                    data: [
-                        jember, 
-                        lumajang
-                    ],
+                    data: dougnutChart.data,
                     backgroundColor: [
                         customColor.red,
                         customColor.blue,
@@ -101,8 +140,8 @@ class DashBoard extends HTMLElement{
                         customColor.purple,
                         customColor.orange
                     ],
-                    hoverBorderWidth:2,
-                    hoverBorderColor:customColor.black,
+                    hoverBorderWidth: 2,
+                    hoverBorderColor: customColor.black,
                     borderWidth: 0
                 }]
             },
@@ -110,29 +149,13 @@ class DashBoard extends HTMLElement{
                 /*animation:false*/
             }
         })
-        const chart2 = new Chart($('#chart2'),{
+        const chart2 = new Chart($('#chart2'), {
             type: 'line',
             data: {
-                labels: [
-                    moment().subtract(6,'d').format('DD/MM/YY'),
-                    moment().subtract(5,'d').format('DD/MM/YY'),
-                    moment().subtract(4,'d').format('DD/MM/YY'),
-                    moment().subtract(3,'d').format('DD/MM/YY'),
-                    moment().subtract(2,'d').format('DD/MM/YY'),
-                    moment().subtract(1,'d').format('DD/MM/YY'),
-                    moment().format('DD/MM/YY')
-                ],
+                labels: lineChart.labels,
                 datasets: [{
-                    label:'Terdaftar',
-                    data: [
-                        Math.floor(Math.random() * 100),
-                        Math.floor(Math.random() * 100),
-                        Math.floor(Math.random() * 100),
-                        Math.floor(Math.random() * 100),
-                        Math.floor(Math.random() * 100),
-                        Math.floor(Math.random() * 100),
-                        jember+lumajang
-                    ],
+                    label: 'Terdaftar',
+                    data: lineChart.data,
                     pointBackgroundColor: [
                         customColor.red,
                         customColor.blue,
@@ -142,11 +165,11 @@ class DashBoard extends HTMLElement{
                         customColor.orange,
                         customColor.red,
                     ],
-                    fill:false,
+                    fill: false,
                     backgroundColor: customColor.blue,
                     borderColor: customColor.blue,
-                    hoverBorderWidth:2,
-                    hoverBorderColor:customColor.black,
+                    hoverBorderWidth: 2,
+                    hoverBorderColor: customColor.black,
                     borderWidth: 0
                 }]
             },
@@ -161,7 +184,19 @@ class DashBoard extends HTMLElement{
                 /*animation:false*/
             }
         })
-        
+
+    }
+    membergrowth(data) {
+        const result = /*html */ `
+        <div class="col s12 m6">
+            <div class="card medium">
+                <div class="card-content black-text">
+                    <span class="card-title">Anggota Lumajang</span>
+                    <h3 id='totLum'>5</h3> Pendaftar baru hari ini
+                </div>
+            </div>
+        </div>
+        `;
     }
 }
-customElements.define('dash-board',DashBoard);
+customElements.define('dash-board', DashBoard);

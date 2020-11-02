@@ -50,6 +50,16 @@ sign-page .card {
     background-color: #fff;
 }
 
+img.circle {
+    width: 100%;
+    object-fit: cover;
+}
+
+img.logo {
+    height: 5em;
+    width: auto;
+}
+
 sign-page .card .card-image img {
     border-radius: 22px 22px 0 0;
 }
@@ -109,6 +119,10 @@ side-nav li>a>.far {
     transition: all 500ms ease;
 }
 
+dash-board>* .card {
+    min-height: 45vh;
+}
+
 dash-board>* .card-title {
     border-bottom: solid;
     border-width: thin;
@@ -124,8 +138,53 @@ dash-board .card h6 {
     font-weight: bolder;
 }
 
+kartu-tanda-anggota .row {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 1vh 2vh;
+}
+
+kartu-tanda-anggota .rounded {
+    border-radius: 15px;
+}
+
+kartu-tanda-anggota img.profil {
+    width: 188px;
+    height: 188px;
+}
+
+kartu-tanda-anggota h1,
+kartu-tanda-anggota h2,
+kartu-tanda-anggota h3,
+kartu-tanda-anggota h4,
+kartu-tanda-anggota h5 {
+    font-weight: bolder;
+    margin: 0.5rem;
+}
+
+kartu-tanda-anggota .col {
+    padding: 0 3vw;
+}
+
+kartu-tanda-anggota .col>p {
+    margin: 2vh!important;
+    font-size: large;
+}
+
+kartu-tanda-anggota p.bold {
+    font-weight: bolder;
+}
+
 .modal {
     border-radius: 20px;
+}
+
+.modal-l {
+    width: 85%!important;
+}
+
+.modal-m {
+    width: 70%!important;
 }
 
 .modal-member-view {
@@ -133,8 +192,24 @@ dash-board .card h6 {
     font-size: large;
 }
 
-.modal-member-view img.rounded {
-    border-radius: 100%;
+.modal-member-view img.rounded,
+img.rounded {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 100%;
+    clip-path: circle(35% at 50% 50%);
+}
+
+#previewFoto {
+    clip-path: circle(35% at 50% 50%);
+}
+
+.img-cropper {
+    width: 100%;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
 }
 
 .input-radio-inline,

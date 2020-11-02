@@ -16,6 +16,12 @@ class PageHelper {
             case 'dashboard':
                 this._target.page = 'dashboard';
                 break;
+            case 'profil':
+                this._target.page = 'profil';
+                break;
+            case 'kta':
+                this._target.page = 'kta';
+                break;
             default:
                 this._target.page = 'signin';
                 break;
