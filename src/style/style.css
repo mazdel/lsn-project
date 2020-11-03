@@ -124,7 +124,7 @@ dash-board>* .m6 .card {
 }
 
 dash-board>* .m12 .card {
-    min-height: 85vh;
+    min-height: 100vh;
 }
 
 dash-board>* .card-title {

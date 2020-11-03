@@ -16,7 +16,8 @@ module.exports = merge(common, {
         },
         historyApiFallback: {
             rewrites: [
-                { from: /\/main\/dashboard/, to: '/dashboard.html' }
+                { from: /\/main\/dashboard/, to: '/dashboard.html' },
+                { from: /\/main\/iframe/, to: '/iframe.html' }
             ]
         }
     },
@@ -24,6 +25,12 @@ module.exports = merge(common, {
         new HtmlWebpackPlugin({
             template: "./src/pages/dashboard_admin.html",
             filename: "dashboard.html",
+            favicon: './src/img/logo/icon.png',
+            base: '../',
+        }),
+        new HtmlWebpackPlugin({
+            template: "./src/pages/iframe.html",
+            filename: "iframe.html",
             favicon: './src/img/logo/icon.png',
             base: '../',
         }),

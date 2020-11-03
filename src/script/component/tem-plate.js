@@ -24,7 +24,8 @@ class TemPlate extends HTMLElement {
         this._data = data;
     }
     render() {
-        $(this).html( /*html*/ `
+        this.innerHTML = ( /*html*/ `
+        
         `);
     }
 }

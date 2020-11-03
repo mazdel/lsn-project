@@ -222,6 +222,7 @@ class UserList extends HTMLElement {
                 page: page,
                 count: count
             });
+            $('.btn-pagination').off();
         });
 
         $(() => {

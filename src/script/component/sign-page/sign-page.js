@@ -12,9 +12,15 @@ class SignPage extends HTMLElement {
         this.class = $(this).attr("class") || "";
         $(this).attr("class", this.class);
         this._page = 'signin';
-        if (sessionStorage.getItem('level')) {
-            window.location.href = `${document.baseURI}main`
+        /*
+        const thisUrl = document.baseURI.replace(/(main)\/?/gi, "");
+        console.log(`${thisUrl}main`);
+        if (sessionStorage.getItem('level') && `${thisUrl}main` != `${document.baseURI}`) {
+            window.location.href = `${thisUrl}main`;
+            //console.log(`${thisUrl}main = ${document.baseURI}main`);
         }
+        this.getsess();
+        */
         this.render();
     }
     disconnectedCallback() {
@@ -72,8 +78,7 @@ class SignPage extends HTMLElement {
         }
         axios(axiosOpt).then(response => {
                 const data = response.data.signedin;
-                console.log('getsess', response);
-
+                console.log(data);
             })
             .catch(error => {
                 console.log(error);

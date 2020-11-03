@@ -38,6 +38,12 @@ module.exports = merge(common, {
             favicon: './src/img/logo/icon.png',
             base: '../',
         }),
+        new HtmlWebpackPlugin({
+            template: "./src/pages/iframe.html",
+            filename: "iframe.html",
+            favicon: './src/img/logo/icon.png',
+            base: '../',
+        }),
         new filemanagerPlugin({
             onEnd: {
                 copy: [{
@@ -51,6 +57,10 @@ module.exports = merge(common, {
                     {
                         source: path.win32.resolve(__dirname, 'dist/dashboard.html'),
                         destination: path.win32.resolve(__dirname, '../ci4-sismana/app/Views/lsn/dashboard.php')
+                    },
+                    {
+                        source: path.win32.resolve(__dirname, 'dist/iframe.html'),
+                        destination: path.win32.resolve(__dirname, '../ci4-sismana/app/Views/lsn/iframe.php')
                     },
                 ]
             }
