@@ -65,42 +65,75 @@ class DashBoard extends HTMLElement {
 
         /**./get session data */
     }
+
+    /**
+     * @param  {String} lastColor default null
+     * @param  {String} last2Color default null
+     * @param  {Array} exclude default []
+     */
+    randomColor(lastColor = null, last2Color = null, exclude = []) {
+
+        const colors = Object.entries(customColor);
+        colors.forEach((value, key) => {
+            if (value[0] == lastColor || value[0] == last2Color) {
+                colors.splice(key, 1);
+            }
+            exclude.forEach(item => {
+                if (value[0] == item) {
+                    colors.splice(key, 1);
+                }
+            })
+        });
+        const result = colors[Math.floor(Math.random() * colors.length)];
+
+        return result;
+    }
     render(data) {
-        //console.log(data);
-        let dougnutChart = {
+        let JumlahAnggota = {
             labels: [],
             data: [],
+            color: [],
             totalMember: 0
         };
-        let lineChart = {
+        let lastColor1 = ``,
+            last2Color1 = ``;
+        let terdaftarHarian = {
             labels: [],
             data: [],
+            color: [],
             totalMember: 0
-        }
+        };
+        let lastColor2 = ``,
+            last2Color2 = ``;
         data.domisili_kab.forEach(value => {
-            dougnutChart.labels.push(value.nama);
-            dougnutChart.data.push(parseInt(value.amount));
-            dougnutChart.totalMember = dougnutChart.totalMember + parseInt(value.amount);
+            const color = this.randomColor(lastColor1, last2Color1, ['black', 'white']);
+
+            last2Color1 = lastColor1;
+            JumlahAnggota.labels.push(value.nama);
+            JumlahAnggota.data.push(parseInt(value.amount));
+            JumlahAnggota.totalMember = JumlahAnggota.totalMember + parseInt(value.amount);
+            JumlahAnggota.color.push(color[1]);
+            lastColor1 = color[0];
         });
         data.tgl_gabung.forEach(value => {
-            lineChart.labels.push(moment(value.tgl_join).format('DD/MM/YY'));
-            lineChart.data.push(parseInt(value.amount));
-            lineChart.totalMember = lineChart.totalMember + parseInt(value.amount);
+            terdaftarHarian.labels.push(moment(value.tgl_join).format('DD/MM/YY'));
+            terdaftarHarian.data.push(parseInt(value.amount));
+            terdaftarHarian.totalMember = terdaftarHarian.totalMember + parseInt(value.amount);
         })
         $(this).html( /*html*/ `
         <div class="green lighten-5">
             <div class="row d block">
-                <div class="col s12 m6">
+                <div class="col s12 m12 l6">
                     <div class="card medium">
                         <div class="card-content white black-text">
                             <span class="card-title">Anggota LSN</span>
                             <canvas id="chart1" class="chart"></canvas>
-                            <h5 id='totMem'>${dougnutChart.totalMember}</h5>
+                            <h5 id='totMem'>${JumlahAnggota.totalMember}</h5>
                             <p>Total anggota saat ini</p>
                         </div>
                     </div>
                 </div>
-                <div class="col s12 m6">
+                <div class="col s12 m12 l6">
                     <div class="card medium">
                         <div class="card-content white black-text">
                             <span class="card-title">Pertumbuhan Anggota</span>
@@ -111,38 +144,19 @@ class DashBoard extends HTMLElement {
             </div>
         </div>
         `);
-        /** data dummy
-        const jember = Math.floor(Math.random() * 100);
-        const lumajang = Math.floor(Math.random() * 100);
-        $('#totJem').text(jember);
-        $('#totLum').text(lumajang);
-        $('#totMem').text(jember + lumajang);
-        */
+
         const chart1 = new Chart($('#chart1'), {
-            type: 'doughnut',
+            type: 'bar',
             data: {
-                labels: dougnutChart.labels,
+                labels: JumlahAnggota.labels,
                 datasets: [{
-                    data: dougnutChart.data,
-                    backgroundColor: [
-                        customColor.red,
-                        customColor.blue,
-                        customColor.yellow,
-                        customColor.green,
-                        customColor.purple,
-                        customColor.orange
-                    ],
-                    borderColor: [
-                        customColor.red,
-                        customColor.blue,
-                        customColor.yellow,
-                        customColor.green,
-                        customColor.purple,
-                        customColor.orange
-                    ],
-                    hoverBorderWidth: 2,
+                    data: JumlahAnggota.data,
+                    label: `# Anggota`,
+                    backgroundColor: JumlahAnggota.color,
+                    borderColor: customColor.black,
+                    hoverBorderWidth: 1,
                     hoverBorderColor: customColor.black,
-                    borderWidth: 0
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -152,10 +166,10 @@ class DashBoard extends HTMLElement {
         const chart2 = new Chart($('#chart2'), {
             type: 'line',
             data: {
-                labels: lineChart.labels,
+                labels: terdaftarHarian.labels,
                 datasets: [{
                     label: 'Terdaftar',
-                    data: lineChart.data,
+                    data: terdaftarHarian.data,
                     pointBackgroundColor: [
                         customColor.red,
                         customColor.blue,
@@ -187,6 +201,7 @@ class DashBoard extends HTMLElement {
 
     }
     membergrowth(data) {
+        //still unused
         const result = /*html */ `
         <div class="col s12 m6">
             <div class="card medium">

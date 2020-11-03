@@ -86,14 +86,14 @@ class KartuTandaAnggota extends HTMLElement {
                                 <div class="col s12 m4 l4">
                                     <img class="circle profil" src="${data.foto_profil}">
                                 </div>
-                                <div class="col s12 m8 l8">
+                                <div class="col s12 m8 l8" id="dataTeks">
                                     <p class="bold">No.KTA : ${data.no_kta}</p>
                                     <p>${data.nama}</p>
                                     <p>${data.tempat_tgl_lahir}</p>
                                     <p>${data.alamat?data.alamat:""}</p>
                                     <p>${data.domisili_kec}, ${data.domisili_kab}</p>
                                 </div>
-                                <div class="col s12 m4 l4" >
+                                <div class="col s12 m4 l4 left-align" >
                                     <canvas id="qrcode"></canvas>
                                 </div>
                             </div>

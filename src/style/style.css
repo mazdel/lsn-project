@@ -119,8 +119,12 @@ side-nav li>a>.far {
     transition: all 500ms ease;
 }
 
-dash-board>* .card {
+dash-board>* .m6 .card {
     min-height: 45vh;
+}
+
+dash-board>* .m12 .card {
+    min-height: 85vh;
 }
 
 dash-board>* .card-title {
@@ -142,6 +146,10 @@ kartu-tanda-anggota .row {
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 1vh 2vh;
+}
+
+kartu-tanda-anggota #dataTeks {
+    max-width: 400px;
 }
 
 kartu-tanda-anggota .rounded {
