@@ -41,7 +41,6 @@ class KartuTandaAnggota extends HTMLElement {
         }
         axios(axiosOpt).then(async response => {
                 const data = response.data.signedin;
-                data.no_kta = data.no_kta || data.domisili_kec_id + data.id;
                 const kab = await kabupaten();
                 kab.forEach(kab => {
                     if (kab.id == data.domisili_kab) {
@@ -56,6 +55,7 @@ class KartuTandaAnggota extends HTMLElement {
                         })
                     }
                 });
+                data.no_kta = data.no_kta || data.domisili_kec_id + data.id;
                 this.render(data);
             })
             .catch(error => {
@@ -82,18 +82,18 @@ class KartuTandaAnggota extends HTMLElement {
                                 </div>
                             </div>
                             
-                            <div class="row valign-wrapper">
-                                <div class="col s4 m4 l4">
+                            <div id="dataDiri" class="row valign-wrapper">
+                                <div class="col s12 m4 l4">
                                     <img class="circle profil" src="${data.foto_profil}">
                                 </div>
-                                <div class="col s8 m8 l8">
+                                <div class="col s12 m8 l8">
                                     <p class="bold">No.KTA : ${data.no_kta}</p>
                                     <p>${data.nama}</p>
                                     <p>${data.tempat_tgl_lahir}</p>
                                     <p>${data.alamat?data.alamat:""}</p>
                                     <p>${data.domisili_kec}, ${data.domisili_kab}</p>
                                 </div>
-                                <div class="col s4 m4 l4" >
+                                <div class="col s12 m4 l4" >
                                     <canvas id="qrcode"></canvas>
                                 </div>
                             </div>
@@ -112,6 +112,29 @@ class KartuTandaAnggota extends HTMLElement {
                 </div>
             </div>
         `;
+        const widthChangeAction = () => {
+                if (window.innerHeight > window.innerWidth) {
+                    //portrait
+                    $('button#print').hide();
+                    $('#dataDiri').removeClass('valign-wrapper');
+                    $('#dataDiri').addClass('center-align');
+                }
+                if (window.innerWidth > window.innerHeight) {
+                    //landscape
+                    $('button#print').show();
+                    $('#dataDiri').addClass('valign-wrapper');
+                    $('#dataDiri').removeClass('center-align');
+                }
+            }
+            //document ready
+        $(() => {
+                widthChangeAction();
+            })
+            //window resize
+        $(window).on('resize', () => {
+            widthChangeAction();
+        })
+        console.log($(window).width());
         $('button#print').on('click', (event) => {
             event.stopPropagation();
             const target = $(event.currentTarget).data('target');

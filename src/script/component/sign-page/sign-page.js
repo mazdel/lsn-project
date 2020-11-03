@@ -12,6 +12,9 @@ class SignPage extends HTMLElement {
         this.class = $(this).attr("class") || "";
         $(this).attr("class", this.class);
         this._page = 'signin';
+        if (sessionStorage.getItem('level')) {
+            window.location.href = `${document.baseURI}main`
+        }
         this.render();
     }
     disconnectedCallback() {
