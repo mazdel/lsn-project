@@ -20,8 +20,8 @@ class SignPage extends HTMLElement {
                 window.location.href = `${thisUrl}main/dashboard`;
             }
         })
-
         this.render();
+        sessionStorage.clear();
     }
     disconnectedCallback() {
 
