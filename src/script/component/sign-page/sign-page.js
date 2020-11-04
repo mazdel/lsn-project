@@ -12,15 +12,15 @@ class SignPage extends HTMLElement {
         this.class = $(this).attr("class") || "";
         $(this).attr("class", this.class);
         this._page = 'signin';
-        /*
-        const thisUrl = document.baseURI.replace(/(main)\/?/gi, "");
-        console.log(`${thisUrl}main`);
-        if (sessionStorage.getItem('level') && `${thisUrl}main` != `${document.baseURI}`) {
-            window.location.href = `${thisUrl}main`;
-            //console.log(`${thisUrl}main = ${document.baseURI}main`);
-        }
-        this.getsess();
-        */
+        this.getsess().then((data) => {
+            if (data) {
+                console.log(data);
+                const thisUrl = document.baseURI.replace(/(main)\/?/gi, "");
+                console.log(`${thisUrl}main`);
+                window.location.href = `${thisUrl}main/dashboard`;
+            }
+        })
+
         this.render();
     }
     disconnectedCallback() {
@@ -68,22 +68,24 @@ class SignPage extends HTMLElement {
     }
     async getsess() {
         /**get session data */
+        const thisBaseUri = document.baseURI.replace(/(main)\/?/gi, "");
         const axiosOpt = {
             method: 'post',
-            url: `${document.baseURI}api/getsession`,
+            url: `${thisBaseUri}api/getsession`,
             data: null,
             headers: {
                 'Content-type': 'application/json',
             }
         }
-        axios(axiosOpt).then(response => {
-                const data = response.data.signedin;
-                console.log(data);
-            })
-            .catch(error => {
-                console.log(error);
-            })
-            /**./get session data */
+        try {
+            const response = await axios(axiosOpt);
+            const data = response.data.signedin;
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+
+        /**./get session data */
     }
 }
 customElements.define('sign-page', SignPage);
