@@ -10,6 +10,7 @@ class ModalMember extends HTMLElement {
         this.id = $(this).attr("id") || "";
         this.class = $(this).attr("class") || "black-text";
         $(this).attr("class", this.class);
+        this.innerHTML = "";
         this.render();
     }
     disconnectedCallback() {
@@ -29,15 +30,15 @@ class ModalMember extends HTMLElement {
     }
     render() {
         const data = this._data;
-        const viewUser = $( /*html */ `<modal-member-view></modal-member-view>`)[0];
-        const delUser = $( /*html */ `<modal-member-delete></modal-member-delete>`)[0];
-        const editUser = $( /*html */ `<modal-member-edit></modal-member-edit>`)[0];
+        const viewUser = document.createElement(`modal-member-view`);
+        const delUser = document.createElement(`modal-member-delete`);
+        const editUser = document.createElement(`modal-member-edit`);
         viewUser.data = data;
         delUser.data = data;
         editUser.data = data;
-        $(this).append(viewUser);
-        $(this).append(delUser);
-        $(this).append(editUser);
+        this.appendChild(viewUser);
+        this.appendChild(delUser);
+        this.appendChild(editUser);
     }
 }
 customElements.define('modal-member', ModalMember);

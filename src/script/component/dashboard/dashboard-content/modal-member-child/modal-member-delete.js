@@ -40,6 +40,7 @@ class ModalMemberDelete extends HTMLElement {
                 </div>
             </div>
         `);
+        $(`#btnDelete-${data.id}`).off();
         $(`#btnDelete-${data.id}`).on(`click`, async event => {
             event.stopPropagation();
             const targetId = $(event.currentTarget).data('target');

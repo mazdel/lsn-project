@@ -110,11 +110,11 @@ class SignIn extends HTMLElement {
             const btn_signin = event.originalEvent.submitter;
             const data = prePost($('form#signin').serializeArray());
             $(`input`).siblings('span').hide();
-
+            const thisBaseUri = document.baseURI.replace(/(main)\/?/gi, "");
             $('#loading').show();
             const axiosOpt = {
                 method: 'post',
-                url: `${document.baseURI}api/signin`,
+                url: `${thisBaseUri}api/signin`,
                 data: data,
                 headers: {
                     'Content-type': 'application/json',
@@ -126,7 +126,7 @@ class SignIn extends HTMLElement {
 
                     $(btn_signin).text(`${data.response}`);
                     setTimeout(() => {
-                        location.href = `${location.origin}${location.pathname}${data.redirect}`;
+                        location.href = `${thisBaseUri}${data.redirect}`;
                     }, 1000);
                 } else {
                     for (const key in data.response) {

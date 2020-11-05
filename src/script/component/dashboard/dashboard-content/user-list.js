@@ -18,7 +18,7 @@ class UserList extends HTMLElement {
         $(this).attr("class", this.class);
         this.dataCount = 50;
         this.currentPage = 1;
-        $(this).empty();
+
 
         this.render();
     }
@@ -214,6 +214,7 @@ class UserList extends HTMLElement {
             count: count
         });
         /*fungsi untuk pagination */
+        $('.btn-pagination').off();
         $('.btn-pagination').on('click', (event) => {
             event.stopPropagation();
             const page = $(event.currentTarget).data('page');
@@ -222,7 +223,6 @@ class UserList extends HTMLElement {
                 page: page,
                 count: count
             });
-            $('.btn-pagination').off();
         });
 
         $(() => {
@@ -236,6 +236,7 @@ class UserList extends HTMLElement {
         });
 
         /*submit add member */
+        $('form#addMember').off();
         $('form#addMember').on('submit', async(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -301,6 +302,8 @@ class UserList extends HTMLElement {
             })
             $('select#domisili_kab').html(selections);
             $('select').formSelect();
+
+            $('select#domisili_kab').off();
             $('select#domisili_kab').on(`change`, (event) => {
                 event.stopPropagation();
                 //solving bug that has been discussed here
@@ -311,6 +314,8 @@ class UserList extends HTMLElement {
             })
         });
     }
+
+    //still need to be improved, to maintain low RAM
     async tableData(paging = { page: this.currentPage, count: this.dataCount }) {
         /**get table data */
         const level = sessionStorage.getItem('level');
@@ -325,6 +330,7 @@ class UserList extends HTMLElement {
                 'Content-type': 'application/json',
             }
         }
+
         axios(axiosOpt).then(response => {
                 const data = response.data;
                 const paging = response.data.paging;
@@ -398,7 +404,6 @@ class UserList extends HTMLElement {
                     $('tbody#user-table-data').append(tableRow);
                     $('div#modals').append(modalUser);
                     $(`.modal`).modal();
-
                 });
                 $(`button#prevPage`).data('page', page.prev);
                 $(`button#nextPage`).data('page', page.next);

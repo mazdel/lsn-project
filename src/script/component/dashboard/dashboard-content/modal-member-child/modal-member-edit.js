@@ -60,7 +60,7 @@ class ModalMemberEdit extends HTMLElement {
         //$(`#editUser${data.id}>div.modal-content>div.container>div.row div.col`).append(form);
         //simpan data
 
-
+        $(`form#formEdit${data.id}`).off();
         $(`form#formEdit${data.id}`).on('submit', async(event) => {
             event.stopPropagation();
             event.preventDefault();
