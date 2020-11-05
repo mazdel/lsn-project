@@ -330,7 +330,6 @@ class UserList extends HTMLElement {
                 'Content-type': 'application/json',
             }
         }
-
         axios(axiosOpt).then(response => {
                 const data = response.data;
                 const paging = response.data.paging;
