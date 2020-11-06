@@ -40,6 +40,13 @@ class UserList extends HTMLElement {
     }
 
     render() {
+        const formAdd = document.createElement(`form-data-member`);
+        formAdd.form = {
+            type: 'add',
+            id: `addMember`,
+            level_field: 'enabled'
+        }
+        console.log(formAdd);
         this.innerHTML = ( /*html*/ `
         <div class="green lighten-5">
             <div class="row d block">
@@ -117,88 +124,7 @@ class UserList extends HTMLElement {
             <div id="modalAdd" class="modal black-text">
                 <div class="modal-content">
                     <h4>Tambah Anggota</h4>
-                    <form class="" id="addMember">
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <i class="prefix fas fa-id-card"></i>
-                            <input aria-required="true" required class="validate" name="nik" id="nik" type="text" pattern="[0-9]{16}">
-                            <label for="nik" data-error="wrong" data-success="right">Nomor Induk Kependudukan*</label>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <i class="material-icons prefix">person_outline</i>
-                            <input aria-required="true" required class="validate" name="nama" id="nama" type="text">
-                            <label for="nama" data-error="wrong" data-success="right">Nama Lengkap*</label>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <i class="fas fa-birthday-cake prefix"></i>
-                            <input placeholder="Jakarta, 17-08-1945" aria-required="true" required class="validate" name="tempat_tgl_lahir" id="tempat_tgl_lahir" type="text">
-                            <label for="tempat_tgl_lahir">Tempat, Tanggal Lahir*</label>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <div class="input-radio-inline">
-                                <i class="fas fa-venus-mars"></i>
-                                <label for="gender-pria">
-                                    <input aria-required="true" value="L" checked class="validate" name="gender" id="gender-pria" type="radio"><span>Pria</span>
-                                </label>
-                                <label for="gender-wanita">
-                                    <input aria-required="true" value="P" class="validate" name="gender" id="gender-wanita" type="radio"><span>Wanita</span>
-                                </label>
-                            </div>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <i class="material-icons prefix">smartphone</i>
-                            <input aria-required="true" required class="validate" name="telp" id="telp" type="tel" pattern="[0-9]{11,13}" title="Nomor HP yang Valid">
-                            <label for="telp" data-error="wrong" data-success="right">No.HP* (0856xxxxx)</label>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <i class="material-icons prefix">lock_outline</i>
-                            <input aria-required="true" id="password" name="password" type="password">
-                            <label for="password">Kata Sandi</label>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <i class="material-icons prefix">lock_outline</i>
-                            <input aria-required="true" id="passwordConf" name="passwordConf" type="password">
-                            <label for="password">Ulangi Kata Sandi</label>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12" id="_kabupaten">
-                            <i class="material-icons prefix">location_on</i>
-                            <select aria-required="true" aria-required="true" required name="domisili_kab" id="domisili_kab" >
-                                
-                            </select>
-                            <label for="domisili_kab">Pilih Kabupaten Domisili</label>
-                            <span class="helper-text">Helper text</span>
-                        </div>
-                    </div>
-                        <div class="row">
-                            <div class="input-field col s12" id="_kecamatan">
-                                
-                            </div>
-                        </div>
-                        <div class="progress" id="addMemberLoading">
-                            <div class="indeterminate green darken-3"></div>
-                        </div>
-                    </form>
+                    
                 </div>
                 <div class="modal-footer">
                     <a class="modal-close waves-effect waves-green btn-flat">Tutup</a>
@@ -207,6 +133,7 @@ class UserList extends HTMLElement {
             </div>
         </div>
         `);
+        document.querySelector('#modalAdd>.modal-content').appendChild(formAdd);
         const count = this.dataCount;
         /**generate table data */
         this.tableData({

@@ -32,8 +32,9 @@ class FormDataMember extends HTMLElement {
             id: this.formId,
             withPassword: false,
             customHeader: null,
-            kta_field: 'disabled',
+            kta_field: null,
             nik_field: 'disabled',
+            level_field: 'disabled',
             class: null
         }) {
         this._form = form;
@@ -42,7 +43,8 @@ class FormDataMember extends HTMLElement {
         const form = this._form;
         let data = {},
             passwordField = ``,
-            kta_field = "";
+            kta_field = "",
+            level_field = "";
         if (form.kta_field) {
             let ktaDisabled;
             if (form.kta_field == 'disabled') {
@@ -55,6 +57,26 @@ class FormDataMember extends HTMLElement {
                     <input ${ktaDisabled||""} class="validate" name="no_kta" id="no_kta-${form.id}" type="text" value="${form.data.no_kta|| (form.data.domisili_kec_id || "") + form.data.id}">
                     
                     <label for="no_kta-${form.id}">Nomor Kartu Anggota</label>
+                    <span class="helper-text">Helper text</span>
+                </div>
+            </div>
+        `;
+        }
+
+        if (form.level_field == 'enabled') {
+            let level = "";
+            if (form.data) {
+                level = form.data.level || "";
+            }
+            level_field = /*html */ `
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="prefix fas fa-users-cog"></i>
+                    <select aria-required="true" aria-required="true" required name="level" id="level-${form.id}" >
+                        <option value="admin" ${level=="admin"?'selected':''}>Admin</option>
+                        <option value="anggota" ${level=="anggota"?'selected':''}>Anggota</option>
+                    </select>
+                    <label for="level-${form.id}">Pilih level user</label>
                     <span class="helper-text">Helper text</span>
                 </div>
             </div>
@@ -190,14 +212,16 @@ class FormDataMember extends HTMLElement {
                         <span class="helper-text">Helper text</span>
                     </div>
                 </div>
-                    <div class="row">
-                        <div class="input-field col s12" id="_kecamatan-${form.id}">
-                            
-                        </div>
+                <div class="row">
+                    <div class="input-field col s12" id="_kecamatan-${form.id}">
+                        
                     </div>
-                    <div class="progress" id="addMemberLoading-${form.id}">
-                        <div class="indeterminate green darken-3"></div>
-                    </div>
+                </div>
+                ${level_field}
+                <div class="progress" id="addMemberLoading-${form.id}">
+                    <div class="indeterminate green darken-3"></div>
+                </div>
+                
                 </form>
         `;
 
@@ -209,7 +233,7 @@ class FormDataMember extends HTMLElement {
 
         const showKecamatan = (id = 3509) => {
             kabupaten().then(items => {
-                let selections = `
+                let selections = /*html */ `
                     <i class="material-icons prefix">location_on</i>
                     <select name="domisili_kec" id="domisili_kec-${form.id}" >
                         <option value="" disabled ${data.domisili_kec_id?'':'selected'}>Pilih Kecamatan</option>

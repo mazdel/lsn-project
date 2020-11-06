@@ -30,12 +30,13 @@ class ModalMemberEdit extends HTMLElement {
     }
     render() {
         const data = this._data;
-        const form = document.createElement(`form-data-member`); //$(`<form-data-member></form-data-member>`)[0];
+        const form = document.createElement(`form-data-member`);
         form.form = {
             type: 'edit',
             data: data,
             id: `formEdit${data.id}`,
-            kta_field: 'disabled'
+            kta_field: 'disabled',
+            level_field: 'enabled'
         }
         this.innerHTML = /* html */ `
             <div id="editUser${data.id}" class="modal modal-fixed-footer modal-l">
@@ -57,7 +58,6 @@ class ModalMemberEdit extends HTMLElement {
             </div>
         `;
         document.querySelector(`#editUser${data.id}>div.modal-content>div.container>div.row div.col`).appendChild(form);
-        //$(`#editUser${data.id}>div.modal-content>div.container>div.row div.col`).append(form);
         //simpan data
 
         $(`form#formEdit${data.id}`).off();
