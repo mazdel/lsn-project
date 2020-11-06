@@ -73,8 +73,9 @@ class FormDataMember extends HTMLElement {
                 <div class="input-field col s12">
                     <i class="prefix fas fa-users-cog"></i>
                     <select aria-required="true" aria-required="true" required name="level" id="level-${form.id}" >
-                        <option value="admin" ${level=="admin"?'selected':''}>Admin</option>
+                        
                         <option value="anggota" ${level=="anggota"?'selected':''}>Anggota</option>
+                        <option value="admin" ${level=="admin"?'selected':''}>Admin</option>
                     </select>
                     <label for="level-${form.id}">Pilih level user</label>
                     <span class="helper-text">Helper text</span>
