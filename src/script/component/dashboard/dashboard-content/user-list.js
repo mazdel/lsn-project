@@ -1,6 +1,7 @@
 import axios from 'axios';
+import XLSX from 'xlsx';
+import moment from 'moment';
 
-import site from '../../../data/site-data';
 import kabupaten from '../../../data/kabupaten';
 import prePost from '../../../helper/api-helper';
 
@@ -46,7 +47,7 @@ class UserList extends HTMLElement {
             id: `addMember`,
             level_field: 'enabled'
         }
-        console.log(formAdd);
+
         this.innerHTML = ( /*html*/ `
         <div class="green lighten-5">
             <div class="row d block">
@@ -111,9 +112,11 @@ class UserList extends HTMLElement {
                     
                 </li>
                 <!-- <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>-->
-                <li><a class="btn-floating green tooltipped" data-position="left" data-tooltip="Download seluruh data anggota (coming soon)">
-                    <i class="material-icons">file_download</i>
-                </a></li>
+                <li>
+                    <button class="btn-floating green tooltipped" id="saveXls" data-position="left" data-tooltip="Download seluruh data anggota">
+                        <i class="material-icons">file_download</i>
+                    </button>
+                </li>
                 
             </ul>
         </div>
@@ -162,7 +165,12 @@ class UserList extends HTMLElement {
             $('.helper-text').hide();
         });
 
-        /*submit add member */
+        $('#saveXls').off();
+        $('#saveXls').on('click', (event) => {
+                event.stopPropagation();
+                this.saveToXls();
+            })
+            /*submit add member */
         $('form#addMember').off();
         $('form#addMember').on('submit', async(event) => {
             event.preventDefault();
@@ -180,7 +188,7 @@ class UserList extends HTMLElement {
                     $('#modalAdd').modal('close');
                     M.toast({ html: 'Penambahan anggota sukses' });
                 } else {
-                    console.log(data);
+
                     for (const key in data.response) {
                         if (data.response.hasOwnProperty(key)) {
                             const message = data.response[key];
@@ -354,6 +362,56 @@ class UserList extends HTMLElement {
             const result = await axios(axiosOpt);
 
             return result.data;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async saveToXls() {
+        const wb = XLSX.utils.book_new();
+        wb.Props = {
+            Title: `Data Anggota LSN Per-${moment().format('DD-MM-YY')}`,
+            Author: `LSN-SISMANA`,
+            CreatedDate: `${moment()}`
+        }
+        wb.SheetNames.push(`Daftar Anggota LSN`);
+        const level = sessionStorage.getItem('level');
+        const axiosOpt = {
+            method: 'post',
+            url: `${document.baseURI}api/${level}/downloadmember`,
+            headers: {
+                'Content-type': 'application/json',
+            }
+        }
+        try {
+            const response = await axios(axiosOpt);
+            const data = response.data.daftar_anggota;
+            let dataToSave = [];
+            /**/
+            data.forEach(async(childData, key) => {
+                const kab = await kabupaten();
+                kab.forEach(kab => {
+                    if (kab.id == childData.domisili_kab) {
+                        childData.domisili_kab_id = childData.domisili_kab;
+                        childData.domisili_kab = kab.nama;
+                        kab.kecamatan.forEach(kec => {
+                            if (kec.id == childData.domisili_kec) {
+                                childData.domisili_kec_id = childData.domisili_kec;
+                                childData.domisili_kec = kec.nama;
+                            }
+                        })
+                    }
+                });
+                dataToSave.push(await childData);
+                if (key == data.length - 1) {
+                    const ws = XLSX.utils.json_to_sheet(dataToSave);
+                    console.log(dataToSave);
+                    wb.Sheets[`Daftar Anggota LSN`] = ws;
+                    XLSX.writeFile(wb, `daftar_anggota_lsn--${moment().format('DD-MM-YY')}.xlsx`);
+                    return true;
+                }
+            })
+
         } catch (error) {
             return error;
         }

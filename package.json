@@ -57,6 +57,7 @@
         "print-js": "^1.5.0",
         "qrcode": "^1.4.4",
         "regenerator-runtime": "^0.13.7",
-        "select2": "^4.0.13"
+        "select2": "^4.0.13",
+        "xlsx": "^0.16.8"
     }
 }
